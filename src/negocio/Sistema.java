@@ -31,28 +31,16 @@ import modelo.PromocionTemporal;
 import modelo.Sueldo;
 
 /**
- * Clase Singleton que representa a la empresa gastronomica.
- * mozos:
- * 			Key   -> Nya
- * 			Value -> Mozo
- * productos: 
- * 			Key   -> id del producto
- * 			Value -> Producto
- * operarios:
- * 			Key   -> userNamer
- * 			Value -> Operario
- * mesas:
- * 			Key   -> numero de mesa
- * 			Value -> Mesa
- * promocionProds:
- * 			Key   -> idProm
- * 			Value -> PromocionProd
+ * Clase Singleton que representa a la empresa gastronomica. mozos: Key -> Nya
+ * Value -> Mozo productos: Key -> id del producto Value -> Producto operarios:
+ * Key -> userNamer Value -> Operario mesas: Key -> numero de mesa Value -> Mesa
+ * promocionProds: Key -> idProm Value -> PromocionProd
  */
 
 public class Sistema {
-	
+
 	private HashMap<String, Mozo> mozos = Cerveceria.getInstance().getMozos();
-	private HashMap<Integer, Producto> productos = Cerveceria.getInstance().getProductos();	
+	private HashMap<Integer, Producto> productos = Cerveceria.getInstance().getProductos();
 	private HashMap<String, Operario> operarios = Cerveceria.getInstance().getOperarios();
 	private HashMap<Integer, Mesa> mesas = Cerveceria.getInstance().getMesas();
 	private HashMap<Integer, PromocionProd> promocionProds = Cerveceria.getInstance().getPromocionProds();
@@ -60,7 +48,9 @@ public class Sistema {
 	private HashMap<String, PromocionTemporal> promocionTemp = Cerveceria.getInstance().getPromocionTemp();
 	private Operario operarioActual;
 	private static Sistema instance = null;
-	//private Sueldo sueldo;		//ESTO ACA ESTA RAROOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO, hay que volarlo y explicar que usamos el metodo y atributo de la CLASE
+	// private Sueldo sueldo; //ESTO ACA ESTA
+	// RAROOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO, hay que volarlo y explicar que
+	// usamos el metodo y atributo de la CLASE
 
 	public static Sistema getInstance() {
 		if (instance == null)
@@ -68,19 +58,19 @@ public class Sistema {
 		return instance;
 	}
 
-	
-
 	public Operario getOperarioActual() {
 		return operarioActual;
 	}
-
-
 
 	public void setOperarioActual(Operario operarioActual) {
 		this.operarioActual = operarioActual;
 	}
 
-
+	/*
+	 * Paau: como pre no tiene que ser NyA username y password dist de null y de
+	 * vacio?? este registro no habria que volarlo? hay un metodo que se llama
+	 * agregaOperario en la clase FuncionalidadAdmin que hace lo mismo... o eso creo
+	 */
 
 	/**
 	 * Metodo que registra un nuevo operario en el sistema. <br>
@@ -96,7 +86,7 @@ public class Sistema {
 	 *                                    asociado a otra cuenta.
 	 */
 	public void registro(String NyA, String userName, String password) throws UserNameRepetido_Exception {
-		//delegar a admin si es un operario
+		// delegar a admin si es un operario
 	}
 
 	/**
@@ -109,21 +99,13 @@ public class Sistema {
 	 * @param userName utilizado para logear al usuario. <br>
 	 * @param password correspondiente al userName. <br>
 	 * @return Retorna un objeto de la clase Operario. <br>
-	 * @throws UserNameIncorrecto_Exception
-	 * @throws ContrasenaIncorrecta_Exception
+	 * @throws UserNameIncorrecto_Exception   no existe el userName.
+	 * @throws ContrasenaIncorrecta_Exception la contrasenia es incorrecta.
 	 */
 
 	public FuncionalidadOperarios login(String userName, String password)
 			throws UserNameIncorrecto_Exception, ContrasenaIncorrecta_Exception {
 		return null;
 	}
-
-	
-	
-	
-	
-	
-	 
-	 
 
 }
