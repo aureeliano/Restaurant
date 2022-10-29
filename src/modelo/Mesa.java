@@ -5,8 +5,7 @@ public class Mesa
     private static int siguienteNroMesa = 0; //el 0 es la barra
     private int nroMesa;
     private int cantPax;
-    //private String estado;
     private Enumerados.estadoMesa estado;
-    //private Mozo mozo;
+    private Mozo mozo;
 }
 

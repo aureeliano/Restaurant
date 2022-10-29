@@ -2,9 +2,7 @@ package negocio;
 
 import java.util.GregorianCalendar;
 
-import excepciones.NoExisteMozo_Exception;
-import excepciones.NoExisteOperario_Exception;
-import excepciones.NyAExistente_Exception;
+import excepciones.NyARepetido_Exception;
 import excepciones.UserNameRepetido_Exception;
 import modelo.Enumerados;
 import modelo.Operario;
@@ -15,12 +13,12 @@ import modelo.Operario;
  */
 public class FuncionalidadAdmin extends FuncionalidadOperarios {
 
-	public FuncionalidadAdmin(Operario operario) {
-		super(operario);
+	public FuncionalidadAdmin(Operario operarioActual) {
+		super(operarioActual);
 	}
 
 	/**
-	 * Método que agrega un nuevo Mozo al sistema. <br>
+	 * Metodo que agrega un nuevo Mozo al sistema. <br>
 	 * Pre: NyA no puede ser null ni vacio, el mozo debe ser mayor de 18 anios y
 	 * cantHijos debe ser mayor o igual a cero. <br>
 	 * Post: Se agrega un nuevo Mozo al sistema.
@@ -33,11 +31,11 @@ public class FuncionalidadAdmin extends FuncionalidadOperarios {
 	 *                  desea agregar.
 	 * @param estado    atributo que representa el estado del mozo que se desea
 	 *                  agregar.
-	 * @throws NyAExistente_Exception si ya hay un mozo registrado con el mismo
+	 * @throws NyARepetido_Exception si ya hay un mozo registrado con el mismo
 	 *                                nombre y apellido
 	 */
 	public void agregaMozo(String NyA, GregorianCalendar fecha, int cantHijos, Enumerados.estadoMozo estado)
-			throws NyAExistente_Exception {
+			throws NyARepetido_Exception {
 	}
 
 	/**
@@ -48,7 +46,7 @@ public class FuncionalidadAdmin extends FuncionalidadOperarios {
 	 *            desea eliminar.
 	 * @throws NoExisteMozo_Exception no existe mozo con ese nombre y apellido
 	 */
-	public void eliminaMozo(String NyA) throws NoExisteMozo_Exception {
+	public void eliminaMozo(String NyA) {
 	}
 
 	/**
@@ -62,9 +60,6 @@ public class FuncionalidadAdmin extends FuncionalidadOperarios {
 	 *                 agregar.
 	 * @param password atributo que representa la password del operario que se desea
 	 *                 agregar.
-	 * 
-	 * @throws UserNameRepetido_Exception si el nombre de usuario ingresado esta
-	 *                                    asociado a otra cuenta.
 	 */
 	public void agregaOperario(String NyA, String userName, String password) throws UserNameRepetido_Exception {
 
@@ -79,7 +74,7 @@ public class FuncionalidadAdmin extends FuncionalidadOperarios {
 	 *                 eliminar.
 	 * @throws NoExisteOperario_Exception no existe operario con ese userName.
 	 */
-	public void eliminaOperario(String userName) throws NoExisteOperario_Exception {
+	public void eliminaOperario(String userName) {
 	}
 
 	/**
@@ -105,7 +100,7 @@ public class FuncionalidadAdmin extends FuncionalidadOperarios {
 	 * Pau: si no se hace lista desplegable o botones, o sea ingreso por teclado el
 	 * id, hay que agregar una excepcion porque puede ser que se ingrese un id de
 	 * producto inexistente Tambien habria que agregar una excepcion de que no se
-	 * puede eliminar el producto porque este está en una comanda PREGUNTAR SI LA
+	 * puede eliminar el producto porque este estï¿½ en una comanda PREGUNTAR SI LA
 	 * COMANDA TIENE QUE ESTAR ABIERTA O KHEEE sino medio que nunca se podria
 	 * eliminar un producto porque es altamente probable de que este en una comanda
 	 */

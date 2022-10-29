@@ -7,28 +7,18 @@
 package negocio;
 
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 
 import excepciones.ContrasenaIncorrecta_Exception;
-import excepciones.NoExisteID_Exception;
-import excepciones.NoExisteMesa_Exception;
-import excepciones.NoExisteMozo_Exception;
-import excepciones.NoExisteOperario_Exception;
-import excepciones.NyAExistente_Exception;
-import excepciones.PromoIdRepetido_Exception;
 import excepciones.UserNameIncorrecto_Exception;
-import excepciones.UserNameRepetido_Exception;
 import modelo.Cerveceria;
 import modelo.Comanda;
-import modelo.Enumerados;
 import modelo.Mesa;
 import modelo.Mozo;
 import modelo.Operario;
 import modelo.Producto;
 import modelo.PromocionProd;
 import modelo.PromocionTemporal;
-import modelo.Sueldo;
 
 /**
  * Clase Singleton que representa a la empresa gastronomica. mozos: Key -> Nya
@@ -64,29 +54,6 @@ public class Sistema {
 
 	public void setOperarioActual(Operario operarioActual) {
 		this.operarioActual = operarioActual;
-	}
-
-	/*
-	 * Paau: como pre no tiene que ser NyA username y password dist de null y de
-	 * vacio?? este registro no habria que volarlo? hay un metodo que se llama
-	 * agregaOperario en la clase FuncionalidadAdmin que hace lo mismo... o eso creo
-	 */
-
-	/**
-	 * Metodo que registra un nuevo operario en el sistema. <br>
-	 * Post: Agrega un nuevo operario al HashMap
-	 * 
-	 * @param NyA      atributo correspondiente al nombre y apellido del operario
-	 *                 que desea registrarse. <br>
-	 * @param userName atributo correspondiente al nombre de usuario que usara el
-	 *                 operario para el login. <br>
-	 * @param password atributo que representa la contrasena y que corresponde al
-	 *                 userName. <br>
-	 * @throws UserNameRepetido_Exception si el nombre de usuario ingresado esta
-	 *                                    asociado a otra cuenta.
-	 */
-	public void registro(String NyA, String userName, String password) throws UserNameRepetido_Exception {
-		// delegar a admin si es un operario
 	}
 
 	/**
