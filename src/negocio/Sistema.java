@@ -35,7 +35,7 @@ public class Sistema {
 	private HashMap<Integer, Mesa> mesas = Cerveceria.getInstance().getMesas();
 	private HashMap<Integer, PromocionProd> promocionProds = Cerveceria.getInstance().getPromocionProds();
 	private ArrayList<Comanda> comandas = Cerveceria.getInstance().getComandas();
-	private HashMap<String, PromocionTemporal> promocionTemp = Cerveceria.getInstance().getPromocionTemp();
+	private HashMap<String, PromocionTemporal> promocionTemps = Cerveceria.getInstance().getPromocionTemp();
 	private Operario operarioActual;
 	private static Sistema instance = null;
 	// private Sueldo sueldo; //ESTO ACA ESTA

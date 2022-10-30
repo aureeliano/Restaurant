@@ -63,36 +63,36 @@ public class FuncionalidadOperarios {
 	/**
 	 * metodo para modificar el/los atributos del mozo que se desee. <br>
 	 * 
-	 * Pre: mozo debe ser distinto de null. <br>
-	 * Pre: NyA debe ser distinto de null y vacio. <br>
+	 * Pre: NyA debe ser key del hashmap mozos del sistema <br>
+	 * Pre: nuevoNyA debe ser distinto de null y vacio. <br>
 	 * Pre: cantHijos debe ser igual a 0 o mayor. <br>
 	 * Post: se modifican los atributos del objeto pasado como parametro. <br>
 	 * 
-	 * @param mozo      que se desea modificar.
-	 * @param NyA       nombre y apellido nuevo.
+	 * @param NyA       nombre y apellido del mozo a modificar.
+	 * @param nuevoNyA  nombre y apellido nuevo.
 	 * @param cantHijos nueva cantidad de hijos.
 	 * @throws NyARepetido_Exception se lanza cuando se intenta cambiar el nombre de
 	 *                               un mozo por uno que ya posee otro mozo.
 	 */
-	public void modificaMozo(Mozo mozo, String NyA, int cantHijos) throws NyARepetido_Exception { // el estado lo
-																									// modifica el o el
-																									// sistema??
+	public void modificaMozo(String NyA, String nuevoNyA, int cantHijos) throws NyARepetido_Exception { // el estado lo
+		// modifica el o el
+		// sistema??
 		// el estado se modifica?
 	}
 
 	/**
 	 * metodo para modificar el/los atributos que se deseen del producto. <br>
 	 * 
-	 * Pre: producto debe ser distinto de null. <br>
-	 * Pre: id debe ser mayor a 0. <br>
+	 * Pre: id debe ser key del hashmap productos del sistema <br>
+	 * Pre: nuevoId debe ser mayor a 0. <br>
 	 * Pre: nombre debe ser distinto de null y vacio. <br>
 	 * Pre: precioCosto debe ser mayor a 0 y menor que precioVenta. <br>
 	 * Pre: precioVenta debe ser mayor a 0 y mayor que precioCosto. <br>
 	 * Pre: stockInicial debe ser mayor a 0. <br>
 	 * Post: se modifican los atributos del objeto pasado como parametro. <br>
 	 * 
-	 * @param producto     producto a modificar. <br>
-	 * @param id           nuevo id del producto. <br>
+	 * @param id           id del producto a modificar. <br>
+	 * @param nuevoId      nuevo id del producto. <br>
 	 * @param nombre       nuevo nombre del producto. <br>
 	 * @param precioCosto  nuevo precio de costo. <br>
 	 * @param precioVenta  nuevo precio de venta. <br>
@@ -100,28 +100,29 @@ public class FuncionalidadOperarios {
 	 * @throws IDRepetido_Exception se lanza cuando se intenta cambiar el id de un
 	 *                              producto por uno que ya posee otro producto .
 	 */
-	public void modificaProducto(Producto producto, int id, String nombre, double precioCosto, double precioVenta,
+	public void modificaProducto(int id, int nuevoId, String nombre, double precioCosto, double precioVenta,
 			int stockInicial) throws IDRepetido_Exception {
 	}
 
 	/**
 	 * metodo para modificar el/los atributos que se deseen de la mesa. <br>
 	 * 
-	 * Pre: mesa debe ser distinto de null. <br>
+	 * Pre: nroMesa debe ser key del hashmap mesas del sistema <br>
 	 * Pre: nroMesa debe ser igual o mayor a 0. <br>
 	 * Pre: cantSillas debe ser mayor a 0. <br>
 	 * Post: se modifican los atributos del objeto pasado como parametro. <br>
 	 * 
 	 * 
-	 * @param mesa       mesa a modificar. <br>
-	 * @param nroMesa    ID de mesa. <br>
-	 * @param cantSillas cantidad de personas que ocuparan la mesa. <br>
-	 * @param libre      estado de la mesa. <br>
+	 * @param nroMesa      numero de la mesa a modificar. <br>
+	 * @param nuevoNroMesa ID de mesa. <br>
+	 * @param cantSillas   cantidad de personas que ocuparan la mesa. <br>
+	 * @param libre        estado de la mesa. <br>
 	 * @throws NroMesaRepetido_Exception Se lanza si se intenta asignar un numero de
 	 *                                   mesa existente.
 	 */
 
-	public void modificaMesa(Mesa mesa, int nroMesa, int cantSillas, boolean libre) throws NroMesaRepetido_Exception {
+	public void modificaMesa(int nroMesa, int nuevoNroMesa, int cantSillas, boolean libre)
+			throws NroMesaRepetido_Exception {
 	}
 
 	/**
@@ -152,25 +153,25 @@ public class FuncionalidadOperarios {
 
 	/**
 	 * metodo para modificar el estado de un producto en promocion.<br>
-	 * Pre: promocionProd debe ser distinto de null. <br>
+	 * Pre: idProm debe ser key del hashmap promocionProds del sistema <br>
 	 * Post: se cambia el atributo activa del objeto promocionProd. <br>
 	 * 
-	 * @param promocionProd producto con promocion a modificar. <br>
-	 * @param activa        nuevo estado de la promocion. <br>
+	 * @param idProm id del producto con promocion a modificar. <br>
+	 * @param activa nuevo estado de la promocion. <br>
 	 */
 
-	public void modificaPromocionProd(PromocionProd promocionProd, boolean activa) {
+	public void modificaPromocionProd(int idProm, boolean activa) {
 		/* solo activa o desactiva la promo */}
 
 	/**
 	 * metodo que elimina un producto en promocion. <br>
-	 * Pre: promocionProd debe ser distinto de null. <br>
+	 * Pre: idProm debe ser key del hashmap promocionProds del sistema <br>
 	 * Post: se elimina el producto en promocion del sistema. <br>
 	 * 
-	 * @param promocionProd producto con promocion a eliminar. <br>
+	 * @param idProms id del producto con promocion a eliminar. <br>
 	 */
 
-	public void eliminaPromocionProd(PromocionProd promocionProd) {
+	public void eliminaPromocionProd(int idProm) {
 	}
 
 	/**
@@ -198,48 +199,49 @@ public class FuncionalidadOperarios {
 
 	/**
 	 * metodo que elimina una promocion temporal del sistema. <br>
-	 * Pre: promocionTemporal debe ser distinto de null. <br>
+	 * Pre: nombre debe ser key del hashmap promocionTemps del sistema <br>
 	 * Post: se elimina una promocion temporal del sistema. <br>
 	 * 
-	 * @param promocionTemporal promocion temporal a eliminar. <br>
+	 * @param nombre nombre de la promocion temporal a eliminar. <br>
 	 */
-	public void eliminaPromocionTemporal(PromocionTemporal promocionTemporal) {
+	public void eliminaPromocionTemporal(String nombre) {
 	}
 
 	/**
 	 * metodo para modificar el estado de una promocion temporal.<br>
-	 * Pre: promocionTemporal debe ser distinto de null. <br>
+	 * Pre: nombre debe ser key del hashmap promocionTemps del sistema <br>
 	 * Post: se cambia el atributo activa del objeto promocionTemporal. <br>
 	 * 
-	 * @param promocionTemporal promocion a modificar. <br>
-	 * @param activa            nuevo estado de la promocion. <br>
+	 * @param nommbre nombre de la promocion a modificar. <br>
+	 * @param activa  nuevo estado de la promocion. <br>
 	 */
-	public void modificaPromocionTemporal(PromocionTemporal promocionTemporal, boolean activo) {
+	public void modificaPromocionTemporal(String nombre, boolean activo) {
 		/* solo activa o desactiva la promo */}
 
 	/**
 	 * metodo que cambia el estado de un mozo. <br>
-	 * Pre: mozo debe ser disitinto de null. <br>
+	 * Pre: NyA debe ser key del hashmap mozos del sistema <br>
 	 * Pre: nuevoEstado debe ser disitinto de null. <br>
 	 * Post: se cambia el atributo estado del mozo. <br>
 	 * 
-	 * @param mozo        a quien se lecambia el estado. <br>
+	 * @param NyA         nombre y apellido del mozo al que se le cambia el estado.
+	 *                    <br>
 	 * @param nuevoEstado nuevo estado que se le cambia el mozo. <br>
 	 */
-	public void cambiaEstadoMozo(Mozo mozo, Enumerados.estadoMozo nuevoEstado) {
+	public void cambiaEstadoMozo(String NyA, Enumerados.estadoMozo nuevoEstado) {
 	}
 
 	/**
-	 * metodo que asigna un mozo a una mesa Pre: mesa debe ser distinto de null.
-	 * <br>
-	 * Pre: mozo debe ser distinto de null. <br>
+	 * metodo que asigna un mozo a una mesa. <br>
+	 * Pre: nroMesa debe ser key del hashmap mesas del sistema <br>
+	 * Pre: NyA debe ser key del hashmap mozos del sistema <br>
 	 * Post: se le asigna el mozo al atributo mozo de la mesa pasada como parametro.
 	 * <br>
 	 * 
-	 * @param mesa mesa a la cual se le asigna el mozo. <br>
-	 * @param mozo mozo que se le asigna a la mozo. <br>
+	 * @param nroMesa numero de la mesa a la cual se le asigna el mozo. <br>
+	 * @param NyA     nombre del mozo que se le asigna a la mesa. <br>
 	 */
-	public void asignaMozoAMesa(Mesa mesa, Mozo mozo) {
+	public void asignaMozoAMesa(int nroMesa, String NyA) {
 	} // mesa ref a mozo
 
 	// verifica promos, instancia MesaAtendida, y la agrega a el ArrayList del mozo
