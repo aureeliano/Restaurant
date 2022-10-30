@@ -1,8 +1,8 @@
 package negocio;
 
 import excepciones.IDRepetido_Exception;
+import excepciones.NroMesaRepetido_Exception;
 import excepciones.NyARepetido_Exception;
-import excepciones.PromoIdRepetido_Exception;
 import excepciones.UserNameRepetido_Exception;
 import modelo.Comanda;
 import modelo.Enumerados;
@@ -10,6 +10,8 @@ import modelo.Mesa;
 import modelo.Mozo;
 import modelo.Operario;
 import modelo.Producto;
+import modelo.PromocionProd;
+import modelo.PromocionTemporal;
 
 public class FuncionalidadOperarios {
 
@@ -22,7 +24,7 @@ public class FuncionalidadOperarios {
 
 	/**
 	 * Metodo utilizado para modificar el o los campos que se deseen del operario
-	 * que inició sesión.
+	 * que inició sesión. <br>
 	 * 
 	 * Pre: el atributo operarioActual de FuncionalidadOperarios debe ser distinto
 	 * de null. <br>
@@ -47,7 +49,7 @@ public class FuncionalidadOperarios {
 	}
 
 	/**
-	 * Metodo utilizado para eliminar el operario que inició sesión.
+	 * Metodo utilizado para eliminar el operario que inició sesión. <br>
 	 * 
 	 * Pre: el atributo operarioActual de FuncionalidadOperarios debe ser distinto
 	 * de null. <br>
@@ -59,7 +61,7 @@ public class FuncionalidadOperarios {
 	}
 
 	/**
-	 * metodo para modificar el/los atributos del mozo que se desee.
+	 * metodo para modificar el/los atributos del mozo que se desee. <br>
 	 * 
 	 * Pre: mozo debe ser distinto de null. <br>
 	 * Pre: NyA debe ser distinto de null y vacio. <br>
@@ -79,7 +81,7 @@ public class FuncionalidadOperarios {
 	}
 
 	/**
-	 * metodo para modificar el/los atributos que se deseen del producto.
+	 * metodo para modificar el/los atributos que se deseen del producto. <br>
 	 * 
 	 * Pre: producto debe ser distinto de null. <br>
 	 * Pre: id debe ser mayor a 0. <br>
@@ -103,7 +105,7 @@ public class FuncionalidadOperarios {
 	}
 
 	/**
-	 * metodo para modificar el/los atributos que se deseen de la mesa.
+	 * metodo para modificar el/los atributos que se deseen de la mesa. <br>
 	 * 
 	 * Pre: mesa debe ser distinto de null. <br>
 	 * Pre: nroMesa debe ser igual o mayor a 0. <br>
@@ -115,68 +117,129 @@ public class FuncionalidadOperarios {
 	 * @param nroMesa    ID de mesa. <br>
 	 * @param cantSillas cantidad de personas que ocuparan la mesa. <br>
 	 * @param libre      estado de la mesa. <br>
+	 * @throws NroMesaRepetido_Exception Se lanza si se intenta asignar un numero de
+	 *                                   mesa existente.
 	 */
 
-	public void modificaMesa(Mesa mesa, int nroMesa, int cantSillas, boolean libre) {
+	public void modificaMesa(Mesa mesa, int nroMesa, int cantSillas, boolean libre) throws NroMesaRepetido_Exception {
 	}
 
 	/**
 	 * metodo para agregar un nueva promocion de un producto al menu. <br>
-	 * Pre: El producto debe ser distinto de null. <br>
-	 * Pre: La promo aplica2x1 y
+	 * Pre: dia debe ser distinto de null. <br>
+	 * Pre: producto debe ser distinto de null. <br>
+	 * Pre: dia debe ser distinto de null. <br>
+	 * Pre: dtoPorCantidad_CantMinima debe ser mayor a 0. <br>
+	 * Pre: dtoPorCantidad_PrecioUnitario debe ser mayor a 0 y menor que 1 (es un
+	 * porcentaje). <br>
+	 * Post: se agrega un nuevo producto con promocion al sistema. <br>
 	 * 
-	 * @param idProd                        ID del producto al que se le aplica la
-	 *                                      promo. <br>
+	 * @param activa                        indica si la promocion esta activa o no.
+	 *                                      <br>
 	 * @param dia                           de la semana en el que estara disponible
 	 *                                      la promo. <br>
+	 * @param producto                      al que se le aplica la promocion
 	 * @param aplica2x1                     tipo de descuento. <br>
 	 * @param aplicaDtoPorCantidad          tipo de descuento. <br>
-	 * @param dtoPorCantidad_CantMinima     tipo de descuento. <br>
-	 * @param dtoPorCantidad_PrecioUnitario tipo de descuento. <br>
-	 * @param activa                        determina si esta activa o no en el
-	 *                                      momento actual. <br>
-	 * @throws PromoIdRepetido_Exception Se lanza si se intenta asignar un
-	 *                                   identificador de promo existente. <br>
+	 * @param dtoPorCantidad_CantMinima     cantidad minima de producto para la cual
+	 *                                      se aplica el descuento. <br>
+	 * @param dtoPorCantidad_PrecioUnitario porcentaje de descuento que se le hace
+	 *                                      producto. <br>
 	 */
-	public void agregaPromocionProd(int idProd, Enumerados.diasDePromo dia, boolean aplica2x1,
-			boolean aplicaDtoPorCantidad, int dtoPorCantidad_CantMinima, double dtoPorCantidad_PrecioUnitario,
-			boolean activa) throws PromoIdRepetido_Exception {
+	public void agregaPromocionProd(boolean activa, Enumerados.diasDePromo dia, Producto producto, boolean aplica2x1,
+			boolean aplicaDtoPorCantidad, int dtoPorCantidad_CantMinima, double dtoPorCantidad_PrecioUnitario) {
 	}
 
 	/**
-	 * metodo para modificar el estado de una promo.<br>
+	 * metodo para modificar el estado de un producto en promocion.<br>
+	 * Pre: promocionProd debe ser distinto de null. <br>
+	 * Post: se cambia el atributo activa del objeto promocionProd. <br>
 	 * 
-	 * @param idProm identificador de la promo. <br>
-	 * @param activa estado de la promo. <br>
+	 * @param promocionProd producto con promocion a modificar. <br>
+	 * @param activa        nuevo estado de la promocion. <br>
 	 */
 
-	public void modificaPromocionProd(int idProm, boolean activa) {
+	public void modificaPromocionProd(PromocionProd promocionProd, boolean activa) {
 		/* solo activa o desactiva la promo */}
 
 	/**
-	 * metodo que elimina la promo. <br>
+	 * metodo que elimina un producto en promocion. <br>
+	 * Pre: promocionProd debe ser distinto de null. <br>
+	 * Post: se elimina el producto en promocion del sistema. <br>
 	 * 
-	 * @param idProm identificador de la promo. <br>
+	 * @param promocionProd producto con promocion a eliminar. <br>
 	 */
 
-	public void eliminaPromocionProd(int idProm) {
+	public void eliminaPromocionProd(PromocionProd promocionProd) {
 	}
 
-	public void agregaPromocionTemporal(String nombre, Enumerados.formaDePago formaDePago, int porcentajeDescuento,
-			Enumerados.diasDePromo diasDePromo, boolean activo, boolean esAcumulable) {
+	/**
+	 * metodo que agrega una promocion temporal al sistema. <br>
+	 * Pre: diasDePromo debe ser distinto de null. <br>
+	 * Pre: nombre debe ser distinto de null y vacio. <br>
+	 * Pre: formaDePago debe ser distinto de null. <br>
+	 * Pre: porcentajeDescuento debe ser mayor a 0 y menor que 1 (es un porcentaje).
+	 * <br>
+	 * 
+	 * @param activa              indica si la promocion esta activa. <br>
+	 * @param diasDePromo         indica que dia de la semana se aplica la
+	 *                            promocion. <br>
+	 * @param nombre              es el nombre de la promocion. <br>
+	 * @param formaDePago         es la forma de pago para la cual se aplica la
+	 *                            promocion. <br>
+	 * @param porcentajeDescuento es el porcentaje de descuento de la aplicacion.
+	 *                            <br>
+	 * @param esAcumulable        indica si se puede acumular con otras promociones.
+	 *                            <br>
+	 */
+	public void agregaPromocionTemporal(boolean activa, Enumerados.diasDePromo diasDePromo, String nombre,
+			Enumerados.formaDePago formaDePago, int porcentajeDescuento, boolean esAcumulable) {
 	}
 
-	public void eliminaPromocionTemporal(String nombre) {
+	/**
+	 * metodo que elimina una promocion temporal del sistema. <br>
+	 * Pre: promocionTemporal debe ser distinto de null. <br>
+	 * Post: se elimina una promocion temporal del sistema. <br>
+	 * 
+	 * @param promocionTemporal promocion temporal a eliminar. <br>
+	 */
+	public void eliminaPromocionTemporal(PromocionTemporal promocionTemporal) {
 	}
 
-	public void modificaPromocionTemporal(String nombre, boolean activo, int porcentajeDescuento,
-			boolean esAcumulable) {
+	/**
+	 * metodo para modificar el estado de una promocion temporal.<br>
+	 * Pre: promocionTemporal debe ser distinto de null. <br>
+	 * Post: se cambia el atributo activa del objeto promocionTemporal. <br>
+	 * 
+	 * @param promocionTemporal promocion a modificar. <br>
+	 * @param activa            nuevo estado de la promocion. <br>
+	 */
+	public void modificaPromocionTemporal(PromocionTemporal promocionTemporal, boolean activo) {
+		/* solo activa o desactiva la promo */}
+
+	/**
+	 * metodo que cambia el estado de un mozo. <br>
+	 * Pre: mozo debe ser disitinto de null. <br>
+	 * Pre: nuevoEstado debe ser disitinto de null. <br>
+	 * Post: se cambia el atributo estado del mozo. <br>
+	 * 
+	 * @param mozo        a quien se lecambia el estado. <br>
+	 * @param nuevoEstado nuevo estado que se le cambia el mozo. <br>
+	 */
+	public void cambiaEstadoMozo(Mozo mozo, Enumerados.estadoMozo nuevoEstado) {
 	}
 
-	public void setEstadoMozo(Mozo mozo) {
-	}
-
-	public void setMesaMozo(Mesa mesa, Mozo mozo) {
+	/**
+	 * metodo que asigna un mozo a una mesa Pre: mesa debe ser distinto de null.
+	 * <br>
+	 * Pre: mozo debe ser distinto de null. <br>
+	 * Post: se le asigna el mozo al atributo mozo de la mesa pasada como parametro.
+	 * <br>
+	 * 
+	 * @param mesa mesa a la cual se le asigna el mozo. <br>
+	 * @param mozo mozo que se le asigna a la mozo. <br>
+	 */
+	public void asignaMozoAMesa(Mesa mesa, Mozo mozo) {
 	} // mesa ref a mozo
 
 	// verifica promos, instancia MesaAtendida, y la agrega a el ArrayList del mozo
