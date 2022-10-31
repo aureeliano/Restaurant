@@ -4,16 +4,20 @@ import java.util.GregorianCalendar;
 
 import excepciones.NyARepetido_Exception;
 import excepciones.UserNameRepetido_Exception;
-import modelo.Enumerados;
+import modelo.Mesa;
+import modelo.Mozo;
 import modelo.Operario;
+import modelo.Producto;
 
 /**
  * Clase que agrupa las funcionalidades usuario de tipo administrador
  *
  */
-public class FuncionalidadAdmin extends FuncionalidadOperarios {
+public class FuncionalidadAdmin extends FuncionalidadOperarios
+{
 
-	public FuncionalidadAdmin(Operario operarioActual) {
+	public FuncionalidadAdmin(Operario operarioActual)
+	{
 		super(operarioActual);
 	}
 
@@ -32,10 +36,15 @@ public class FuncionalidadAdmin extends FuncionalidadOperarios {
 	 * @param estado    atributo que representa el estado del mozo que se desea
 	 *                  agregar.
 	 * @throws NyARepetido_Exception si ya hay un mozo registrado con el mismo
-	 *                                nombre y apellido
+	 *                               nombre y apellido
 	 */
-	public void agregaMozo(String NyA, GregorianCalendar fecha, int cantHijos, Enumerados.estadoMozo estado)
-			throws NyARepetido_Exception {
+	public void agregaMozo(String NyA, GregorianCalendar fecha, int cantHijos) throws NyARepetido_Exception
+	{
+		if (Sistema.getInstance().getMozos().containsKey(NyA))
+			throw new NyARepetido_Exception(NyA);
+		else
+			Sistema.getInstance().getMozos().put(NyA, new Mozo(NyA, fecha, cantHijos));
+
 	}
 
 	/**
@@ -46,7 +55,9 @@ public class FuncionalidadAdmin extends FuncionalidadOperarios {
 	 *            desea eliminar.
 	 * @throws NoExisteMozo_Exception no existe mozo con ese nombre y apellido
 	 */
-	public void eliminaMozo(String NyA) {
+	public void eliminaMozo(String NyA)
+	{
+		Sistema.getInstance().getMozos().remove(NyA);
 	}
 
 	/**
@@ -61,8 +72,12 @@ public class FuncionalidadAdmin extends FuncionalidadOperarios {
 	 * @param password atributo que representa la password del operario que se desea
 	 *                 agregar.
 	 */
-	public void agregaOperario(String NyA, String userName, String password) throws UserNameRepetido_Exception {
-
+	public void agregaOperario(String NyA, String username, String password) throws UserNameRepetido_Exception
+	{
+		if (Sistema.getInstance().getOperarios().containsKey(username))
+			throw new UserNameRepetido_Exception(username);
+		else
+			Sistema.getInstance().getOperarios().put(username, new Operario(NyA, username, password));
 	}
 
 	/**
@@ -74,7 +89,9 @@ public class FuncionalidadAdmin extends FuncionalidadOperarios {
 	 *                 eliminar.
 	 * @throws NoExisteOperario_Exception no existe operario con ese userName.
 	 */
-	public void eliminaOperario(String userName) {
+	public void eliminaOperario(String userName)
+	{
+		Sistema.getInstance().getOperarios().remove(userName);
 	}
 
 	/**
@@ -93,7 +110,10 @@ public class FuncionalidadAdmin extends FuncionalidadOperarios {
 	 * @param stockInicial atributo que representa el stock inicial del producto que
 	 *                     se dese agregar.
 	 */
-	public void agregaProducto(String nombre, double precioCosto, double precioVenta, int stockInicial) {
+	public void agregaProducto(String nombre, double precioCosto, double precioVenta, int stockInicial)
+	{
+		Producto prod = new Producto(nombre, precioCosto,precioVenta,stockInicial);
+		Sistema.getInstance().getProductos().put(prod.getIdProd(), prod);
 	}
 
 	/*
@@ -112,8 +132,9 @@ public class FuncionalidadAdmin extends FuncionalidadOperarios {
 	 * @param idProd atributo que representa el id del producto que se desea
 	 *               eliminar del sistema.
 	 */
-	public void eliminaProducto(int idProd) {
-
+	public void eliminaProducto(int idProd)
+	{
+		Sistema.getInstance().getProductos().remove(idProd);
 	}
 
 	/**
@@ -126,7 +147,10 @@ public class FuncionalidadAdmin extends FuncionalidadOperarios {
 	 * @param libre      atributo que representa el estado de la mesa que se desea
 	 *                   agregar.
 	 */
-	public void agregaMesa(int cantSillas, boolean libre) {
+	public void agregaMesa(int cantSillas)
+	{
+		Mesa mesa = new Mesa(cantSillas);
+		Sistema.getInstance().getMesas().put(mesa.getNroMesa(), mesa);
 	}
 
 	/*
@@ -142,8 +166,9 @@ public class FuncionalidadAdmin extends FuncionalidadOperarios {
 	 * 
 	 * @param numeroMesa atributo que representa la mesa que se desea eliminar.
 	 */
-	public void eliminaMesa(int numeroMesa) {
-
+	public void eliminaMesa(int nroMesa)
+	{
+		Sistema.getInstance().getMesas().remove(nroMesa);
 	}
 
 }

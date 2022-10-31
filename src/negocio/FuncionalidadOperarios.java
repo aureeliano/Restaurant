@@ -1,6 +1,5 @@
 package negocio;
 
-import excepciones.IDRepetido_Exception;
 import excepciones.NroMesaRepetido_Exception;
 import excepciones.NyARepetido_Exception;
 import excepciones.UserNameRepetido_Exception;
@@ -11,13 +10,14 @@ import modelo.Mozo;
 import modelo.Operario;
 import modelo.Producto;
 import modelo.PromocionProd;
-import modelo.PromocionTemporal;
 
-public class FuncionalidadOperarios {
+public class FuncionalidadOperarios
+{
 
 	private Operario operarioActual;
 
-	public FuncionalidadOperarios(Operario operarioActual) {
+	public FuncionalidadOperarios(Operario operarioActual)
+	{
 		super();
 		this.operarioActual = operarioActual;
 	}
@@ -40,12 +40,22 @@ public class FuncionalidadOperarios {
 	 * @throws UserNameRepetido_Exception Se lanza si el nuevo nombre de usuario ya
 	 *                                    existe en el sistema.
 	 */
-	public void modificaOperario(String NyA, String userName, String password, boolean activo)
-			throws UserNameRepetido_Exception {
+	public void modificaOperario(String NyA, String username, String password, boolean activo)
+			throws UserNameRepetido_Exception
+	{
 
-		// llamamos al operario actual y modificamos a ese
-		// se delega a la Clase Operario
-		// El estado se modifica?
+		if (!this.operarioActual.getUsername().equals(username)
+				&& Sistema.getInstance().getOperarios().containsKey(username))
+			throw new UserNameRepetido_Exception(username);
+		else
+		{
+			Sistema.getInstance().getOperarios().remove(this.operarioActual.getUsername());
+			this.operarioActual.setNyA(NyA);
+			this.operarioActual.setUsername(username);
+			this.operarioActual.setPassword(password);
+			this.operarioActual.setActivo(activo);
+			Sistema.getInstance().getOperarios().put(username, this.operarioActual);
+		}
 	}
 
 	/**
@@ -55,9 +65,10 @@ public class FuncionalidadOperarios {
 	 * de null. <br>
 	 * Post: se elimina operarioActual del sistema. <br>
 	 */
-	public void eliminaOperario() { // consideramos que el operario puede eliminarse por s� mismo al igual que puede
-									// eliminarlo el admin.
-		// se llama al actual y se lo elimina
+	public void eliminaOperario()
+	{
+		Sistema.getInstance().getOperarios().remove(this.operarioActual.getUsername());
+		this.operarioActual = null;
 	}
 
 	/**
@@ -74,17 +85,40 @@ public class FuncionalidadOperarios {
 	 * @throws NyARepetido_Exception se lanza cuando se intenta cambiar el nombre de
 	 *                               un mozo por uno que ya posee otro mozo.
 	 */
-	public void modificaMozo(String NyA, String nuevoNyA, int cantHijos) throws NyARepetido_Exception { // el estado lo
-		// modifica el o el
-		// sistema??
-		// el estado se modifica?
+	public void modificaMozo(String NyA, String nuevoNyA, int cantHijos) throws NyARepetido_Exception
+	{
+		Mozo mozo = Sistema.getInstance().getMozos().get(NyA);
+		if (!mozo.getNyA().equals(nuevoNyA) && Sistema.getInstance().getMozos().containsKey(nuevoNyA))
+			throw new NyARepetido_Exception(nuevoNyA);
+		else
+		{
+			Sistema.getInstance().getMozos().remove(mozo.getNyA());
+			mozo.setNyA(nuevoNyA);
+			mozo.setCantHijos(cantHijos);
+			Sistema.getInstance().getMozos().put(nuevoNyA, mozo);
+		}
+	}
+
+	/**
+	 * metodo que cambia el estado de un mozo. <br>
+	 * Pre: NyA debe ser key del hashmap mozos del sistema <br>
+	 * Pre: nuevoEstado debe ser disitinto de null. <br>
+	 * Post: se cambia el atributo estado del mozo. <br>
+	 * 
+	 * @param NyA         nombre y apellido del mozo al que se le cambia el estado.
+	 *                    <br>
+	 * @param nuevoEstado nuevo estado que se le cambia el mozo. <br>
+	 */
+	public void cambiaEstadoMozo(String NyA, Enumerados.estadoMozo nuevoEstado)
+	{
+		Mozo mozo = Sistema.getInstance().getMozos().get(NyA);
+		mozo.setEstado(nuevoEstado);
 	}
 
 	/**
 	 * metodo para modificar el/los atributos que se deseen del producto. <br>
 	 * 
 	 * Pre: id debe ser key del hashmap productos del sistema <br>
-	 * Pre: nuevoId debe ser mayor a 0. <br>
 	 * Pre: nombre debe ser distinto de null y vacio. <br>
 	 * Pre: precioCosto debe ser mayor a 0 y menor que precioVenta. <br>
 	 * Pre: precioVenta debe ser mayor a 0 y mayor que precioCosto. <br>
@@ -92,7 +126,6 @@ public class FuncionalidadOperarios {
 	 * Post: se modifican los atributos del objeto pasado como parametro. <br>
 	 * 
 	 * @param id           id del producto a modificar. <br>
-	 * @param nuevoId      nuevo id del producto. <br>
 	 * @param nombre       nuevo nombre del producto. <br>
 	 * @param precioCosto  nuevo precio de costo. <br>
 	 * @param precioVenta  nuevo precio de venta. <br>
@@ -100,29 +133,35 @@ public class FuncionalidadOperarios {
 	 * @throws IDRepetido_Exception se lanza cuando se intenta cambiar el id de un
 	 *                              producto por uno que ya posee otro producto .
 	 */
-	public void modificaProducto(int id, int nuevoId, String nombre, double precioCosto, double precioVenta,
-			int stockInicial) throws IDRepetido_Exception {
+	public void modificaProducto(int id, String nombre, double precioCosto, double precioVenta, int stockInicial)
+	{
+		Producto prod = Sistema.getInstance().getProductos().get(id);
+		prod.setNombre(nombre);
+		prod.setPrecioCosto(precioCosto);
+		prod.setPrecioVenta(precioVenta);
+		prod.setStockInicial(stockInicial);
 	}
 
 	/**
 	 * metodo para modificar el/los atributos que se deseen de la mesa. <br>
 	 * 
 	 * Pre: nroMesa debe ser key del hashmap mesas del sistema <br>
-	 * Pre: nroMesa debe ser igual o mayor a 0. <br>
 	 * Pre: cantSillas debe ser mayor a 0. <br>
 	 * Post: se modifican los atributos del objeto pasado como parametro. <br>
 	 * 
 	 * 
-	 * @param nroMesa      numero de la mesa a modificar. <br>
-	 * @param nuevoNroMesa ID de mesa. <br>
-	 * @param cantSillas   cantidad de personas que ocuparan la mesa. <br>
-	 * @param libre        estado de la mesa. <br>
+	 * @param nroMesa    numero de la mesa a modificar. <br>
+	 * @param cantSillas cantidad de personas que ocuparan la mesa. <br>
+	 * @param libre      estado de la mesa. <br>
 	 * @throws NroMesaRepetido_Exception Se lanza si se intenta asignar un numero de
 	 *                                   mesa existente.
 	 */
 
-	public void modificaMesa(int nroMesa, int nuevoNroMesa, int cantSillas, boolean libre)
-			throws NroMesaRepetido_Exception {
+	public void modificaMesa(int nroMesa, int cantSillas, Enumerados.estadoMesa estado) throws NroMesaRepetido_Exception
+	{
+		Mesa mesa = Sistema.getInstance().getMesas().get(nroMesa);
+		mesa.setCantSillas(cantSillas);
+		mesa.setEstado(estado);
 	}
 
 	/**
@@ -148,7 +187,10 @@ public class FuncionalidadOperarios {
 	 *                                      producto. <br>
 	 */
 	public void agregaPromocionProd(boolean activa, Enumerados.diasDePromo dia, Producto producto, boolean aplica2x1,
-			boolean aplicaDtoPorCantidad, int dtoPorCantidad_CantMinima, double dtoPorCantidad_PrecioUnitario) {
+			boolean aplicaDtoPorCant, int dtoPorCant_CantMinima, double dtoPorCant_PrecioUnitario)
+	{
+	PromocionProd promprod = new PromocionProd(dia,producto,aplica2x1,aplicaDtoPorCant,dtoPorCant_CantMinima,dtoPorCant_PrecioUnitario);
+	Sistema.getInstance().getPromocionProds().put(promprod.getIdProm(), promprod);
 	}
 
 	/**
@@ -160,7 +202,8 @@ public class FuncionalidadOperarios {
 	 * @param activa nuevo estado de la promocion. <br>
 	 */
 
-	public void modificaPromocionProd(int idProm, boolean activa) {
+	public void modificaPromocionProd(int idProm, boolean activa)
+	{
 		/* solo activa o desactiva la promo */}
 
 	/**
@@ -171,7 +214,8 @@ public class FuncionalidadOperarios {
 	 * @param idProms id del producto con promocion a eliminar. <br>
 	 */
 
-	public void eliminaPromocionProd(int idProm) {
+	public void eliminaPromocionProd(int idProm)
+	{
 	}
 
 	/**
@@ -194,7 +238,8 @@ public class FuncionalidadOperarios {
 	 *                            <br>
 	 */
 	public void agregaPromocionTemporal(boolean activa, Enumerados.diasDePromo diasDePromo, String nombre,
-			Enumerados.formaDePago formaDePago, int porcentajeDescuento, boolean esAcumulable) {
+			Enumerados.formaDePago formaDePago, int porcentajeDescuento, boolean esAcumulable)
+	{
 	}
 
 	/**
@@ -204,7 +249,8 @@ public class FuncionalidadOperarios {
 	 * 
 	 * @param nombre nombre de la promocion temporal a eliminar. <br>
 	 */
-	public void eliminaPromocionTemporal(String nombre) {
+	public void eliminaPromocionTemporal(String nombre)
+	{
 	}
 
 	/**
@@ -215,21 +261,9 @@ public class FuncionalidadOperarios {
 	 * @param nommbre nombre de la promocion a modificar. <br>
 	 * @param activa  nuevo estado de la promocion. <br>
 	 */
-	public void modificaPromocionTemporal(String nombre, boolean activo) {
+	public void modificaPromocionTemporal(String nombre, boolean activo)
+	{
 		/* solo activa o desactiva la promo */}
-
-	/**
-	 * metodo que cambia el estado de un mozo. <br>
-	 * Pre: NyA debe ser key del hashmap mozos del sistema <br>
-	 * Pre: nuevoEstado debe ser disitinto de null. <br>
-	 * Post: se cambia el atributo estado del mozo. <br>
-	 * 
-	 * @param NyA         nombre y apellido del mozo al que se le cambia el estado.
-	 *                    <br>
-	 * @param nuevoEstado nuevo estado que se le cambia el mozo. <br>
-	 */
-	public void cambiaEstadoMozo(String NyA, Enumerados.estadoMozo nuevoEstado) {
-	}
 
 	/**
 	 * metodo que asigna un mozo a una mesa. <br>
@@ -241,21 +275,26 @@ public class FuncionalidadOperarios {
 	 * @param nroMesa numero de la mesa a la cual se le asigna el mozo. <br>
 	 * @param NyA     nombre del mozo que se le asigna a la mesa. <br>
 	 */
-	public void asignaMozoAMesa(int nroMesa, String NyA) {
+	public void asignaMozoAMesa(int nroMesa, String NyA)
+	{
 	} // mesa ref a mozo
 
 	// verifica promos, instancia MesaAtendida, y la agrega a el ArrayList del mozo
-	public void cierraMesa(Comanda comanda) {
+	public void cierraMesa(Comanda comanda)
+	{
 	}
 
-	public void cierraComanda(Comanda comanda) {
+	public void cierraComanda(Comanda comanda)
+	{
 	}
 
 	// crea comanda
-	public void abreComanda(Mesa mesa) {
+	public void abreComanda(Mesa mesa)
+	{
 	}
 
-	public void agregaPedidos(Comanda comanda, int cant, int idProd) {
+	public void agregaPedidos(Comanda comanda, int cant, int idProd)
+	{
 	}
 
 }

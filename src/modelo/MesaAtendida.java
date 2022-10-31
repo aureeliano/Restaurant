@@ -14,7 +14,7 @@ public class MesaAtendida {
 	
 	
 	public MesaAtendida(GregorianCalendar fecha, Mesa mesa, ArrayList<Pedido> pedidos, double total,
-			modelo.Enumerados.formaDePago formaDePago, ArrayList<Promocion> promociones) {
+			Enumerados.formaDePago formaDePago, ArrayList<Promocion> promociones) {
 		super();
 		this.fecha = fecha;
 		this.mesa = mesa;

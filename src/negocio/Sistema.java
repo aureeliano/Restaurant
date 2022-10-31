@@ -27,7 +27,8 @@ import modelo.PromocionTemporal;
  * promocionProds: Key -> idProm Value -> PromocionProd
  */
 
-public class Sistema {
+public class Sistema
+{
 
 	private HashMap<String, Mozo> mozos = Cerveceria.getInstance().getMozos();
 	private HashMap<Integer, Producto> productos = Cerveceria.getInstance().getProductos();
@@ -36,25 +37,70 @@ public class Sistema {
 	private HashMap<Integer, PromocionProd> promocionProds = Cerveceria.getInstance().getPromocionProds();
 	private ArrayList<Comanda> comandas = Cerveceria.getInstance().getComandas();
 	private HashMap<String, PromocionTemporal> promocionTemps = Cerveceria.getInstance().getPromocionTemp();
-	private Operario operarioActual;
 	private static Sistema instance = null;
+	private final String usernameADMIN = "ADMIN";
+	private final String passwordADMIN = "ADMIN1234";
 	// private Sueldo sueldo; //ESTO ACA ESTA
 	// RAROOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO, hay que volarlo y explicar que
 	// usamos el metodo y atributo de la CLASE
 
-	public static Sistema getInstance() {
+	public static Sistema getInstance()
+	{
 		if (instance == null)
 			instance = new Sistema();
 		return instance;
 	}
+	
+	
 
-	public Operario getOperarioActual() {
-		return operarioActual;
+	public HashMap<String, Mozo> getMozos()
+	{
+		return mozos;
 	}
 
-	public void setOperarioActual(Operario operarioActual) {
-		this.operarioActual = operarioActual;
+
+
+	public HashMap<Integer, Producto> getProductos()
+	{
+		return productos;
 	}
+
+
+
+	public HashMap<String, Operario> getOperarios()
+	{
+		return operarios;
+	}
+
+
+
+	public HashMap<Integer, Mesa> getMesas()
+	{
+		return mesas;
+	}
+
+
+
+	public HashMap<Integer, PromocionProd> getPromocionProds()
+	{
+		return promocionProds;
+	}
+
+
+
+	public ArrayList<Comanda> getComandas()
+	{
+		return comandas;
+	}
+
+
+
+	public HashMap<String, PromocionTemporal> getPromocionTemps()
+	{
+		return promocionTemps;
+	}
+
+
 
 	/**
 	 * metodo para logear un operario. <br>
@@ -64,15 +110,34 @@ public class Sistema {
 	 * Post: El operario queda logeado. <br>
 	 * 
 	 * @param userName utilizado para logear al usuario. <br>
-	 * @param password correspondiente al userName. <br>
+	 * @param password corresp ondiente al userName. <br>
 	 * @return Retorna un objeto de la clase Operario. <br>
 	 * @throws UserNameIncorrecto_Exception   no existe el userName.
 	 * @throws ContrasenaIncorrecta_Exception la contrasenia es incorrecta.
 	 */
 
-	public FuncionalidadOperarios login(String userName, String password)
-			throws UserNameIncorrecto_Exception, ContrasenaIncorrecta_Exception {
-		return null;
+	public FuncionalidadOperarios login(String username, String password)
+			throws UserNameIncorrecto_Exception, ContrasenaIncorrecta_Exception
+	{
+		FuncionalidadOperarios fO = null;
+		if (username.equals(this.usernameADMIN))
+		{
+			if (password.equals(this.passwordADMIN))
+				;// aca habria que cambiar la contrasena del admin pero no se como
+			if (this.operarios.get("ADMIN").getPassword().equals(password))
+				fO = new FuncionalidadAdmin(this.operarios.get("ADMIN"));
+			else
+				throw new ContrasenaIncorrecta_Exception();
+		} 
+		else if (operarios.containsKey(username))
+			if (operarios.get(username).getPassword().equals(password))
+				fO = new FuncionalidadOperarios(operarios.get(username));
+			else
+				throw new ContrasenaIncorrecta_Exception();
+		else
+			throw new UserNameIncorrecto_Exception(username);
+
+		return fO;
 	}
 
 }
