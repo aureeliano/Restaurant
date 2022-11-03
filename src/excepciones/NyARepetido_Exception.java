@@ -8,6 +8,11 @@ public final class NyARepetido_Exception extends Exception {
 		super();
 		NyARepetido = nyARepetido;
 	}
+
+	public String getNyARepetido()
+	{
+		return NyARepetido;
+	}
 	
 	
 }

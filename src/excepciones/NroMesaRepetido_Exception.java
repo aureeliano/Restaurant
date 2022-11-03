@@ -8,4 +8,9 @@ public class NroMesaRepetido_Exception extends Exception {
 		this.nroMesa = nroMesa;
 	}
 
+	public int getNroMesa()
+	{
+		return nroMesa;
+	}
+
 }

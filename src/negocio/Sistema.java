@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import excepciones.ContrasenaIncorrecta_Exception;
+import excepciones.OperarioNoActivo_Exception;
 import excepciones.UserNameIncorrecto_Exception;
 import modelo.Cerveceria;
 import modelo.Comanda;
@@ -50,57 +51,41 @@ public class Sistema
 			instance = new Sistema();
 		return instance;
 	}
-	
-	
 
 	public HashMap<String, Mozo> getMozos()
 	{
 		return mozos;
 	}
 
-
-
 	public HashMap<Integer, Producto> getProductos()
 	{
 		return productos;
 	}
-
-
 
 	public HashMap<String, Operario> getOperarios()
 	{
 		return operarios;
 	}
 
-
-
 	public HashMap<Integer, Mesa> getMesas()
 	{
 		return mesas;
 	}
-
-
 
 	public HashMap<Integer, PromocionProd> getPromocionProds()
 	{
 		return promocionProds;
 	}
 
-
-
 	public ArrayList<Comanda> getComandas()
 	{
 		return comandas;
 	}
 
-
-
 	public HashMap<String, PromocionTemporal> getPromocionTemps()
 	{
 		return promocionTemps;
 	}
-
-
 
 	/**
 	 * metodo para logear un operario. <br>
@@ -117,7 +102,7 @@ public class Sistema
 	 */
 
 	public FuncionalidadOperarios login(String username, String password)
-			throws UserNameIncorrecto_Exception, ContrasenaIncorrecta_Exception
+			throws UserNameIncorrecto_Exception, ContrasenaIncorrecta_Exception, OperarioNoActivo_Exception
 	{
 		FuncionalidadOperarios fO = null;
 		if (username.equals(this.usernameADMIN))
@@ -128,11 +113,15 @@ public class Sistema
 				fO = new FuncionalidadAdmin(this.operarios.get("ADMIN"));
 			else
 				throw new ContrasenaIncorrecta_Exception();
-		} 
-		else if (operarios.containsKey(username))
+		} else if (operarios.containsKey(username))
 			if (operarios.get(username).getPassword().equals(password))
-				fO = new FuncionalidadOperarios(operarios.get(username));
-			else
+			{
+				Operario op = operarios.get(username);
+				if (!op.isActivo())
+					throw new OperarioNoActivo_Exception(username);
+				else
+					fO = new FuncionalidadOperarios(op);
+			} else
 				throw new ContrasenaIncorrecta_Exception();
 		else
 			throw new UserNameIncorrecto_Exception(username);

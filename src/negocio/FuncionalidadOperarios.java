@@ -1,7 +1,9 @@
 package negocio;
 
+import excepciones.MozoNoActivo_Exception;
 import excepciones.NroMesaRepetido_Exception;
 import excepciones.NyARepetido_Exception;
+import excepciones.PromocionTemporalNombreRepetido_Exception;
 import excepciones.UserNameRepetido_Exception;
 import modelo.Comanda;
 import modelo.Enumerados;
@@ -10,6 +12,7 @@ import modelo.Mozo;
 import modelo.Operario;
 import modelo.Producto;
 import modelo.PromocionProd;
+import modelo.PromocionTemporal;
 
 public class FuncionalidadOperarios
 {
@@ -21,6 +24,15 @@ public class FuncionalidadOperarios
 		super();
 		this.operarioActual = operarioActual;
 	}
+	
+	
+
+	public Operario getOperarioActual()
+	{
+		return operarioActual;
+	}
+
+
 
 	/**
 	 * Metodo utilizado para modificar el o los campos que se deseen del operario
@@ -36,11 +48,10 @@ public class FuncionalidadOperarios
 	 * @param NyA      nombre y apellido nuevo.
 	 * @param userName nuevo nombre de usuario.
 	 * @param password nueva contrasenia.
-	 * @param activo   nuevo estado del Operario.
 	 * @throws UserNameRepetido_Exception Se lanza si el nuevo nombre de usuario ya
 	 *                                    existe en el sistema.
 	 */
-	public void modificaOperario(String NyA, String username, String password, boolean activo)
+	public void modificaOperario(String NyA, String username, String password)
 			throws UserNameRepetido_Exception
 	{
 
@@ -53,7 +64,6 @@ public class FuncionalidadOperarios
 			this.operarioActual.setNyA(NyA);
 			this.operarioActual.setUsername(username);
 			this.operarioActual.setPassword(password);
-			this.operarioActual.setActivo(activo);
 			Sistema.getInstance().getOperarios().put(username, this.operarioActual);
 		}
 	}
@@ -189,8 +199,9 @@ public class FuncionalidadOperarios
 	public void agregaPromocionProd(boolean activa, Enumerados.diasDePromo dia, Producto producto, boolean aplica2x1,
 			boolean aplicaDtoPorCant, int dtoPorCant_CantMinima, double dtoPorCant_PrecioUnitario)
 	{
-	PromocionProd promprod = new PromocionProd(dia,producto,aplica2x1,aplicaDtoPorCant,dtoPorCant_CantMinima,dtoPorCant_PrecioUnitario);
-	Sistema.getInstance().getPromocionProds().put(promprod.getIdProm(), promprod);
+		PromocionProd promprod = new PromocionProd(dia, producto, aplica2x1, aplicaDtoPorCant, dtoPorCant_CantMinima,
+				dtoPorCant_PrecioUnitario);
+		Sistema.getInstance().getPromocionProds().put(promprod.getIdProm(), promprod);
 	}
 
 	/**
@@ -204,7 +215,9 @@ public class FuncionalidadOperarios
 
 	public void modificaPromocionProd(int idProm, boolean activa)
 	{
-		/* solo activa o desactiva la promo */}
+		Sistema.getInstance().getPromocionProds().get(idProm).setActiva(activa);
+		;
+	}
 
 	/**
 	 * metodo que elimina un producto en promocion. <br>
@@ -216,6 +229,7 @@ public class FuncionalidadOperarios
 
 	public void eliminaPromocionProd(int idProm)
 	{
+		Sistema.getInstance().getPromocionProds().remove(idProm);
 	}
 
 	/**
@@ -236,10 +250,21 @@ public class FuncionalidadOperarios
 	 *                            <br>
 	 * @param esAcumulable        indica si se puede acumular con otras promociones.
 	 *                            <br>
+	 * @throws PromocionTemporalNombreRepetido_Exception se lanza si una promocion
+	 *                                                   ya habia sido nombrada con
+	 *                                                   el mismo nombre que se pasa
+	 *                                                   como parametro. <br>
+	 * 
 	 */
-	public void agregaPromocionTemporal(boolean activa, Enumerados.diasDePromo diasDePromo, String nombre,
+	public void agregaPromocionTemporal(Enumerados.diasDePromo diasDePromo, String nombre,
 			Enumerados.formaDePago formaDePago, int porcentajeDescuento, boolean esAcumulable)
+			throws PromocionTemporalNombreRepetido_Exception
 	{
+		if (Sistema.getInstance().getPromocionTemps().containsKey(nombre))
+			throw new PromocionTemporalNombreRepetido_Exception(nombre);
+		else
+			Sistema.getInstance().getPromocionTemps().put(nombre,
+					new PromocionTemporal(diasDePromo, nombre, formaDePago, porcentajeDescuento, esAcumulable));
 	}
 
 	/**
@@ -251,6 +276,7 @@ public class FuncionalidadOperarios
 	 */
 	public void eliminaPromocionTemporal(String nombre)
 	{
+		Sistema.getInstance().getPromocionTemps().remove(nombre);
 	}
 
 	/**
@@ -263,7 +289,8 @@ public class FuncionalidadOperarios
 	 */
 	public void modificaPromocionTemporal(String nombre, boolean activo)
 	{
-		/* solo activa o desactiva la promo */}
+		Sistema.getInstance().getPromocionTemps().get(nombre).setActiva(activo);
+	}
 
 	/**
 	 * metodo que asigna un mozo a una mesa. <br>
@@ -275,8 +302,13 @@ public class FuncionalidadOperarios
 	 * @param nroMesa numero de la mesa a la cual se le asigna el mozo. <br>
 	 * @param NyA     nombre del mozo que se le asigna a la mesa. <br>
 	 */
-	public void asignaMozoAMesa(int nroMesa, String NyA)
+	public void asignaMozoAMesa(int nroMesa, String NyA) throws MozoNoActivo_Exception
 	{
+		Mozo mozo = Sistema.getInstance().getMozos().get(NyA);
+		if (mozo.getEstado().equals(Enumerados.estadoMozo.ACTIVO))
+			Sistema.getInstance().getMesas().get(nroMesa).setMozo(mozo);
+		else
+			throw new MozoNoActivo_Exception(mozo.getNyA());
 	} // mesa ref a mozo
 
 	// verifica promos, instancia MesaAtendida, y la agrega a el ArrayList del mozo

@@ -2,6 +2,7 @@ package negocio;
 
 import java.util.GregorianCalendar;
 
+import excepciones.ContrasenaInvalida_Exception;
 import excepciones.NyARepetido_Exception;
 import excepciones.UserNameRepetido_Exception;
 import modelo.Mesa;
@@ -49,7 +50,7 @@ public class FuncionalidadAdmin extends FuncionalidadOperarios
 
 	/**
 	 * Metodo que elimina un Mozo del sistema. <br>
-	 * Pre: NyA no puede ser null ni vacio. <br>
+	 * Pre: NyA debe ser key del hashmap mozos del sistema <br>
 	 * 
 	 * @param NyA atributo que representa el nombre y el apellido del mozo que se
 	 *            desea eliminar.
@@ -66,32 +67,71 @@ public class FuncionalidadAdmin extends FuncionalidadOperarios
 	 * Post: Se agrega un nuevo operario al sistema. <br>
 	 * 
 	 * @param NyA      atributo que representa el nombre y apellido del operario que
-	 *                 se desea agregar.
+	 *                 se desea agregar. <br>
 	 * @param userName atributo que representa el userName del operario que se desea
-	 *                 agregar.
+	 *                 agregar. <br>
 	 * @param password atributo que representa la password del operario que se desea
-	 *                 agregar.
+	 *                 agregar. <br>
 	 */
-	public void agregaOperario(String NyA, String username, String password) throws UserNameRepetido_Exception
+	public void agregaOperario(String NyA, String username, String password)
+			throws UserNameRepetido_Exception, ContrasenaInvalida_Exception
 	{
 		if (Sistema.getInstance().getOperarios().containsKey(username))
 			throw new UserNameRepetido_Exception(username);
+		else if (!PasswordValida(password))
+			throw new ContrasenaInvalida_Exception();
 		else
 			Sistema.getInstance().getOperarios().put(username, new Operario(NyA, username, password));
 	}
 
+	private boolean PasswordValida(String password)
+	{
+		boolean mayuscula = false;
+		boolean digito = false;
+		if (password.length() > 5 && password.length() < 13)
+		{
+			char ch;
+			int i = 0;
+			while (i < password.length() && (!digito || !mayuscula))
+			{
+				ch = password.charAt(i);
+				if (Character.isDigit(ch))
+					digito = true;
+				else if (Character.isUpperCase(ch))
+					mayuscula = true;
+				i++;
+			}
+		}
+		return (mayuscula && digito);
+
+	}
+
+	/**
+	 * Metodo que activa o desactiva a un operario. <br>
+	 * Pre: username debe ser key del hashmap operarios del sistema <br>
+	 * Post: se cambia el estado del operario con el username pasado como parametro.
+	 * <br>
+	 * 
+	 * @param username username del oprario a modificar. <br>
+	 * @param activo   se activa o desactiva el operario.<br>
+	 */
+	public void activaDesactivaOperario(String username, boolean activo)
+	{
+		Sistema.getInstance().getOperarios().get(username).setActivo(activo);
+	}
+
 	/**
 	 * Metodo que elimina un operario del sistema. <br>
-	 * Pre: userName no puede ser null ni vacio. <br>
+	 * Pre: username debe ser key del hashmap operarios del sistema <br>
 	 * Post: Se elimina un operario del sistema. <br>
 	 * 
-	 * @param userName atributo que representa el userName del operario que se desea
+	 * @param username atributo que representa el userName del operario que se desea
 	 *                 eliminar.
 	 * @throws NoExisteOperario_Exception no existe operario con ese userName.
 	 */
-	public void eliminaOperario(String userName)
+	public void eliminaOperario(String username)
 	{
-		Sistema.getInstance().getOperarios().remove(userName);
+		Sistema.getInstance().getOperarios().remove(username);
 	}
 
 	/**
@@ -112,7 +152,7 @@ public class FuncionalidadAdmin extends FuncionalidadOperarios
 	 */
 	public void agregaProducto(String nombre, double precioCosto, double precioVenta, int stockInicial)
 	{
-		Producto prod = new Producto(nombre, precioCosto,precioVenta,stockInicial);
+		Producto prod = new Producto(nombre, precioCosto, precioVenta, stockInicial);
 		Sistema.getInstance().getProductos().put(prod.getIdProd(), prod);
 	}
 
@@ -127,6 +167,7 @@ public class FuncionalidadAdmin extends FuncionalidadOperarios
 
 	/**
 	 * Metodo que elimina un producto del sistema. <br>
+	 * Pre: idProd debe ser key del hashmap productos del sistema <br>
 	 * Post: Se elimina un producto del sistema. <br>
 	 * 
 	 * @param idProd atributo que representa el id del producto que se desea
@@ -161,7 +202,7 @@ public class FuncionalidadAdmin extends FuncionalidadOperarios
 
 	/**
 	 * Metodo que elimina una mesa del sistema. <br>
-	 * Pre: numeroMesa debe ser mayor igual a cero. <br>
+	 * Pre: nroMesqa debe ser key del hashmap mesas del sistema <br>
 	 * Post: Se elimina una mesa del sistema. <br>
 	 * 
 	 * @param numeroMesa atributo que representa la mesa que se desea eliminar.

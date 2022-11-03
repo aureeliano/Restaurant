@@ -8,4 +8,10 @@ public class UserNameRepetido_Exception extends Exception {
 		this.userName = userName;
 	}
 
+	public String getUserName()
+	{
+		return userName;
+	}
+
+	
 }

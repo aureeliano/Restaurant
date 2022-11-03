@@ -7,4 +7,11 @@ public class UserNameIncorrecto_Exception extends Exception{
 		super();
 		this.userName = userName;
 	}
+
+	public String getUserName()
+	{
+		return userName;
+	}
+	
+	
 }
