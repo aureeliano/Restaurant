@@ -8,7 +8,7 @@ import negocio.Sistema;
 public class Cerveceria {
 
 	
-	private HashMap<String, Mozo> mozos = new HashMap<>();
+	private HashMap<String, Mozo> mozos = new HashMap<String, Mozo>();
 	private HashMap<Integer, Producto> productos = new HashMap<Integer, Producto>();	
 	private HashMap<String, Operario> operarios = new HashMap<String, Operario>();
 	private HashMap<Integer, Mesa> mesas = new HashMap<Integer, Mesa>();
