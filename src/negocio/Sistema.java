@@ -13,6 +13,7 @@ import excepciones.ContrasenaIncorrecta_Exception;
 import excepciones.UserNameIncorrecto_Exception;
 import modelo.Cerveceria;
 import modelo.Comanda;
+import modelo.Enumerados;
 import modelo.Mesa;
 import modelo.Mozo;
 import modelo.Operario;
