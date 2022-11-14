@@ -53,6 +53,13 @@ public class Mesa
 	{
 		this.mozo = mozo;
 	}
+
+	public static int getSiguienteNroMesa()
+	{
+		return siguienteNroMesa;
+	}
+
+
     
     
 }

@@ -8,13 +8,13 @@ import negocio.Sistema;
 public class Cerveceria {
 
 	
-	private HashMap<String, Mozo> mozos = new HashMap<>();
+	private HashMap<String, Mozo> mozos = new HashMap<String, Mozo>();
 	private HashMap<Integer, Producto> productos = new HashMap<Integer, Producto>();	
 	private HashMap<String, Operario> operarios = new HashMap<String, Operario>();
 	private HashMap<Integer, Mesa> mesas = new HashMap<Integer, Mesa>();
 	private HashMap<Integer, PromocionProd> promocionProds = new HashMap<Integer, PromocionProd>();
-	private HashMap<String, PromocionTemporal> promocionTemp = new HashMap<String, PromocionTemporal>();
-	private ArrayList<Comanda> comandas = new ArrayList<Comanda>();
+	private ArrayList<PromocionTemporal> promocionTemp = new ArrayList<PromocionTemporal>();
+	private HashMap<Integer,Comanda> comandas = new HashMap<Integer,Comanda>();
 	private static Cerveceria instance = null;
 	private String usuarioAdministrador="ADMIN";
 	private String codigoAdministrador = "ADMIN1234";
@@ -45,11 +45,11 @@ public class Cerveceria {
 		return promocionProds;
 	}
 
-	public ArrayList<Comanda> getComandas() {
+	public HashMap<Integer,Comanda> getComandas() {
 		return comandas;
 	}
 
-	public HashMap<String, PromocionTemporal> getPromocionTemp() {
+	public ArrayList<PromocionTemporal> getPromocionTemp() {
 		return promocionTemp;
 	}
 	

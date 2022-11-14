@@ -1,13 +1,25 @@
 package negocio;
 
-import java.util.GregorianCalendar;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Map.Entry;
 
 import excepciones.ContrasenaInvalida_Exception;
+import excepciones.MozoMenorDeEdad_Exception;
+import excepciones.NoPuedeHaberMasDe6Mozos_Exception;
 import excepciones.NyARepetido_Exception;
+import excepciones.ProductoEstaEnComanda_Exception;
+import excepciones.SilasDebenSerMayoresA1CuandoNroMesaMayorA1_Exception;
 import excepciones.UserNameRepetido_Exception;
+import modelo.Comanda;
 import modelo.Mesa;
 import modelo.Mozo;
 import modelo.Operario;
+import modelo.Pedido;
 import modelo.Producto;
 
 /**
@@ -24,8 +36,8 @@ public class FuncionalidadAdmin extends FuncionalidadOperarios
 
 	/**
 	 * Metodo que agrega un nuevo Mozo al sistema. <br>
-	 * Pre: NyA no puede ser null ni vacio, el mozo debe ser mayor de 18 anios y
-	 * cantHijos debe ser mayor o igual a cero. <br>
+	 * Pre: NyA no puede ser null ni vacio. <br>
+	 * Pre: cantHijos debe ser mayor o igual a cero. <br>
 	 * Post: Se agrega un nuevo Mozo al sistema.
 	 * 
 	 * @param NyA       atributo que representa nombre y apellido del mozo que se
@@ -34,17 +46,31 @@ public class FuncionalidadAdmin extends FuncionalidadOperarios
 	 *                  agregar.
 	 * @param cantHijos atributo que representa la cantidad de hijos del mozo que se
 	 *                  desea agregar.
-	 * @param estado    atributo que representa el estado del mozo que se desea
-	 *                  agregar.
-	 * @throws NyARepetido_Exception si ya hay un mozo registrado con el mismo
-	 *                               nombre y apellido
+	 * @throws NyARepetido_Exception             si ya hay un mozo registrado con el
+	 *                                           mismo nombre y apellido.
+	 * @throws NoPuedeHaberMasDe6Mozos_Exception si se intenta agregar un mozo
+	 *                                           cuando ya hay 6 en el sistema.
+	 * @throws MozoMenorDeEdad_Exception         si el mozo es menor de edad.
 	 */
-	public void agregaMozo(String NyA, GregorianCalendar fecha, int cantHijos) throws NyARepetido_Exception
+	public void agregaMozo(String NyA, int diaDeNacimiento, int mesDeNacimiento, int anioDeNacimiento, int cantHijos)
+			throws NyARepetido_Exception, NoPuedeHaberMasDe6Mozos_Exception, MozoMenorDeEdad_Exception
 	{
+		if (Sistema.getInstance().getMozos().size() > 6)
+			throw new NoPuedeHaberMasDe6Mozos_Exception();
 		if (Sistema.getInstance().getMozos().containsKey(NyA))
 			throw new NyARepetido_Exception(NyA);
 		else
-			Sistema.getInstance().getMozos().put(NyA, new Mozo(NyA, fecha, cantHijos));
+		{
+			Date fechaDeNacimiento = new Date();
+			fechaDeNacimiento.setDate(diaDeNacimiento);
+			fechaDeNacimiento.setMonth(mesDeNacimiento - 1);
+			fechaDeNacimiento.setYear(anioDeNacimiento - 1900);
+			LocalDate nacimiento = fechaDeNacimiento.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			long edad = ChronoUnit.YEARS.between(nacimiento, LocalDate.now());
+			if (edad < 18)
+				throw new MozoMenorDeEdad_Exception(edad);
+			Sistema.getInstance().getMozos().put(NyA, new Mozo(NyA, fechaDeNacimiento, cantHijos));
+		}
 
 	}
 
@@ -54,7 +80,6 @@ public class FuncionalidadAdmin extends FuncionalidadOperarios
 	 * 
 	 * @param NyA atributo que representa el nombre y el apellido del mozo que se
 	 *            desea eliminar.
-	 * @throws NoExisteMozo_Exception no existe mozo con ese nombre y apellido
 	 */
 	public void eliminaMozo(String NyA)
 	{
@@ -72,6 +97,8 @@ public class FuncionalidadAdmin extends FuncionalidadOperarios
 	 *                 agregar. <br>
 	 * @param password atributo que representa la password del operario que se desea
 	 *                 agregar. <br>
+	 * @throws UserNameRepetido_Exception si e username ya le pertenece a otro operario. <br>
+	 * @throws ContrasenaInvalida_Exception si la contrasenia no cumple que contiene entre 6 y 12 caracteres con al menos 1 digito y 1 mayuscula 
 	 */
 	public void agregaOperario(String NyA, String username, String password)
 			throws UserNameRepetido_Exception, ContrasenaInvalida_Exception
@@ -127,7 +154,6 @@ public class FuncionalidadAdmin extends FuncionalidadOperarios
 	 * 
 	 * @param username atributo que representa el userName del operario que se desea
 	 *                 eliminar.
-	 * @throws NoExisteOperario_Exception no existe operario con ese userName.
 	 */
 	public void eliminaOperario(String username)
 	{
@@ -156,6 +182,25 @@ public class FuncionalidadAdmin extends FuncionalidadOperarios
 		Sistema.getInstance().getProductos().put(prod.getIdProd(), prod);
 	}
 
+	/**
+	 * metodo para modificar los stocks del producto. <br>
+	 * 
+	 * Pre: id debe ser key del hashmap productos del sistema <br>
+	 * Pre: stockInicial debe ser mayor a 0. <br>
+	 * Pre: stockActual debe ser menor o igual a stockInicial. <br>
+	 * Post: se modifican los stocks del objeto pasado como parametro. <br>
+	 * 
+	 * @param id           id del producto a modificar. <br>
+	 * @param stockInicial nuevo stock inicial. <br>
+	 * @param stockActual  nuevo stock actual. <br>
+	 */
+	public void modificaStockDeProducto(int id, int stockInicial, int stockActual)
+	{
+		Producto prod = Sistema.getInstance().getProductos().get(id);
+		prod.setStockInicial(stockInicial);
+		prod.setStockActual(stockActual);
+	}
+
 	/*
 	 * Pau: si no se hace lista desplegable o botones, o sea ingreso por teclado el
 	 * id, hay que agregar una excepcion porque puede ser que se ingrese un id de
@@ -172,9 +217,30 @@ public class FuncionalidadAdmin extends FuncionalidadOperarios
 	 * 
 	 * @param idProd atributo que representa el id del producto que se desea
 	 *               eliminar del sistema.
+	 * @throws ProductoEstaEnComanda_Exception si el producto que se quiere elminar
+	 *                                         se encuentra en una comanda.
 	 */
-	public void eliminaProducto(int idProd)
+	public void eliminaProducto(int idProd) throws ProductoEstaEnComanda_Exception
 	{
+		Producto prod = Sistema.getInstance().getProductos().get(idProd);
+		boolean estaEnComanda = false;
+		Iterator<Entry<Integer, Comanda>> it = Sistema.getInstance().getComandas().entrySet().iterator();
+		Entry<Integer, Comanda> entry = null;
+		while (it.hasNext() && (estaEnComanda == false))
+		{
+			entry = it.next();
+			ArrayList<Pedido> pedidos = entry.getValue().getPedidos();
+			int i = 0;
+			while (i < pedidos.size() && estaEnComanda == false)
+			{
+				if (pedidos.get(i).getProducto().equals(prod))
+					estaEnComanda = true;
+				i++;
+			}
+
+		}
+		if (estaEnComanda == true)
+			throw new ProductoEstaEnComanda_Exception(prod.getNombre());
 		Sistema.getInstance().getProductos().remove(idProd);
 	}
 
@@ -185,11 +251,17 @@ public class FuncionalidadAdmin extends FuncionalidadOperarios
 	 * 
 	 * @param cantSillas atributo que representa la cantidad de sillas que tiene la
 	 *                   mesa que se desea agregar.
-	 * @param libre      atributo que representa el estado de la mesa que se desea
-	 *                   agregar.
+	 * @throws SilasDebenSerMayoresA1CuandoNroMesaMayorA1_Exception si no se cumple
+	 *                                                              que la cantidad
+	 *                                                              de comensales es
+	 *                                                              > =2 cuando el
+	 *                                                              nro de mesa es >
+	 *                                                              1
 	 */
-	public void agregaMesa(int cantSillas)
+	public void agregaMesa(int cantSillas) throws SilasDebenSerMayoresA1CuandoNroMesaMayorA1_Exception
 	{
+		if (Mesa.getSiguienteNroMesa() + 1 > 1 && cantSillas < 2)
+			throw new SilasDebenSerMayoresA1CuandoNroMesaMayorA1_Exception();
 		Mesa mesa = new Mesa(cantSillas);
 		Sistema.getInstance().getMesas().put(mesa.getNroMesa(), mesa);
 	}

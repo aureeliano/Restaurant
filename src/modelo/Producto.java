@@ -8,6 +8,7 @@ public class Producto
     private double precioCosto;
     private double precioVenta;
     private int stockInicial;
+    private int stockActual;
     
 	/**
 	 * Pre: precioCosto debe ser mayor a 0. <br>
@@ -18,6 +19,7 @@ public class Producto
 	 * @param precioCosto
 	 * @param precioVenta
 	 * @param stockInicial
+	 * @param stockInicial
 	 */
     public Producto(String nombre, double precioCosto, double precioVenta, int stockInicial)
 	{
@@ -26,6 +28,7 @@ public class Producto
 		this.precioCosto = precioCosto;
 		this.precioVenta = precioVenta;
 		this.stockInicial = stockInicial;
+		this.stockActual = stockInicial;
 	}
 
 	public int getIdProd()
@@ -72,7 +75,18 @@ public class Producto
 	{
 		this.stockInicial = stockInicial;
 	}
+
+	public int getStockActual()
+	{
+		return stockActual;
+	}
+
+	public void setStockActual(int stockActual)
+	{
+		this.stockActual = stockActual;
+	}
     
+	
     
 
     

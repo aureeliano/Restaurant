@@ -1,16 +1,32 @@
 package negocio;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map.Entry;
+
+import excepciones.ComandaYaCerrada_Exception;
+import excepciones.MenosDe2ProdsEnPromocion_Exception;
+import excepciones.MesaNoTieneComanda_Exception;
+import excepciones.MesaOcupada_Exception;
 import excepciones.MozoNoActivo_Exception;
+import excepciones.NoHayProductos_Exception;
 import excepciones.NroMesaRepetido_Exception;
 import excepciones.NyARepetido_Exception;
 import excepciones.PromocionTemporalNombreRepetido_Exception;
+import excepciones.StockInsuficiente_Exception;
+import excepciones.TodasMesasInhabilitadas_Exception;
+import excepciones.TodosMozosInactivos_Exception;
 import excepciones.UserNameRepetido_Exception;
 import modelo.Comanda;
 import modelo.Enumerados;
 import modelo.Mesa;
+import modelo.MesaAtendida;
 import modelo.Mozo;
 import modelo.Operario;
+import modelo.Pedido;
 import modelo.Producto;
+import modelo.Promocion;
 import modelo.PromocionProd;
 import modelo.PromocionTemporal;
 
@@ -24,15 +40,11 @@ public class FuncionalidadOperarios
 		super();
 		this.operarioActual = operarioActual;
 	}
-	
-	
 
 	public Operario getOperarioActual()
 	{
 		return operarioActual;
 	}
-
-
 
 	/**
 	 * Metodo utilizado para modificar el o los campos que se deseen del operario
@@ -51,8 +63,7 @@ public class FuncionalidadOperarios
 	 * @throws UserNameRepetido_Exception Se lanza si el nuevo nombre de usuario ya
 	 *                                    existe en el sistema.
 	 */
-	public void modificaOperario(String NyA, String username, String password)
-			throws UserNameRepetido_Exception
+	public void modificaOperario(String NyA, String username, String password) throws UserNameRepetido_Exception
 	{
 
 		if (!this.operarioActual.getUsername().equals(username)
@@ -132,24 +143,19 @@ public class FuncionalidadOperarios
 	 * Pre: nombre debe ser distinto de null y vacio. <br>
 	 * Pre: precioCosto debe ser mayor a 0 y menor que precioVenta. <br>
 	 * Pre: precioVenta debe ser mayor a 0 y mayor que precioCosto. <br>
-	 * Pre: stockInicial debe ser mayor a 0. <br>
 	 * Post: se modifican los atributos del objeto pasado como parametro. <br>
 	 * 
-	 * @param id           id del producto a modificar. <br>
-	 * @param nombre       nuevo nombre del producto. <br>
-	 * @param precioCosto  nuevo precio de costo. <br>
-	 * @param precioVenta  nuevo precio de venta. <br>
-	 * @param stockInicial nuevo stock inicial. <br>
-	 * @throws IDRepetido_Exception se lanza cuando se intenta cambiar el id de un
-	 *                              producto por uno que ya posee otro producto .
+	 * @param id          id del producto a modificar. <br>
+	 * @param nombre      nuevo nombre del producto. <br>
+	 * @param precioCosto nuevo precio de costo. <br>
+	 * @param precioVenta nuevo precio de venta. <br>
 	 */
-	public void modificaProducto(int id, String nombre, double precioCosto, double precioVenta, int stockInicial)
+	public void modificaProducto(int id, String nombre, double precioCosto, double precioVenta)
 	{
 		Producto prod = Sistema.getInstance().getProductos().get(id);
 		prod.setNombre(nombre);
 		prod.setPrecioCosto(precioCosto);
 		prod.setPrecioVenta(precioVenta);
-		prod.setStockInicial(stockInicial);
 	}
 
 	/**
@@ -201,7 +207,9 @@ public class FuncionalidadOperarios
 	{
 		PromocionProd promprod = new PromocionProd(dia, producto, aplica2x1, aplicaDtoPorCant, dtoPorCant_CantMinima,
 				dtoPorCant_PrecioUnitario);
-		Sistema.getInstance().getPromocionProds().put(promprod.getIdProm(), promprod);
+		Sistema.getInstance().getPromocionProds().put(producto.getIdProd(), promprod); // se usa el id del producto como
+																						// key de la promocion (facilita
+																						// las cosas)
 	}
 
 	/**
@@ -260,11 +268,13 @@ public class FuncionalidadOperarios
 			Enumerados.formaDePago formaDePago, int porcentajeDescuento, boolean esAcumulable)
 			throws PromocionTemporalNombreRepetido_Exception
 	{
-		if (Sistema.getInstance().getPromocionTemps().containsKey(nombre))
-			throw new PromocionTemporalNombreRepetido_Exception(nombre);
-		else
-			Sistema.getInstance().getPromocionTemps().put(nombre,
-					new PromocionTemporal(diasDePromo, nombre, formaDePago, porcentajeDescuento, esAcumulable));
+		ArrayList<PromocionTemporal> promoTemps = Sistema.getInstance().getPromocionTemps();
+
+		for (int i = 0; i < promoTemps.size(); i++)
+			if (promoTemps.get(i).getNombre().equals(nombre))
+				throw new PromocionTemporalNombreRepetido_Exception(nombre);
+
+		promoTemps.add(new PromocionTemporal(diasDePromo, nombre, formaDePago, porcentajeDescuento, esAcumulable));
 	}
 
 	/**
@@ -276,7 +286,11 @@ public class FuncionalidadOperarios
 	 */
 	public void eliminaPromocionTemporal(String nombre)
 	{
-		Sistema.getInstance().getPromocionTemps().remove(nombre);
+		ArrayList<PromocionTemporal> promoTemps = Sistema.getInstance().getPromocionTemps();
+		int i = 0;
+		while (i < promoTemps.size() && !promoTemps.get(i).getNombre().equals(nombre))
+			i++;
+		promoTemps.remove(i);
 	}
 
 	/**
@@ -289,7 +303,11 @@ public class FuncionalidadOperarios
 	 */
 	public void modificaPromocionTemporal(String nombre, boolean activo)
 	{
-		Sistema.getInstance().getPromocionTemps().get(nombre).setActiva(activo);
+		ArrayList<PromocionTemporal> promoTemps = Sistema.getInstance().getPromocionTemps();
+		int i = 0;
+		while (i < promoTemps.size() && !promoTemps.get(i).getNombre().equals(nombre))
+			i++;
+		promoTemps.get(i).setActiva(activo);
 	}
 
 	/**
@@ -301,6 +319,8 @@ public class FuncionalidadOperarios
 	 * 
 	 * @param nroMesa numero de la mesa a la cual se le asigna el mozo. <br>
 	 * @param NyA     nombre del mozo que se le asigna a la mesa. <br>
+	 * @throws MozoNoActivo_Exception si el mozo que se le quiere asignar a la mesa
+	 *                                no esta activo
 	 */
 	public void asignaMozoAMesa(int nroMesa, String NyA) throws MozoNoActivo_Exception
 	{
@@ -311,22 +331,302 @@ public class FuncionalidadOperarios
 			throw new MozoNoActivo_Exception(mozo.getNyA());
 	} // mesa ref a mozo
 
-	// verifica promos, instancia MesaAtendida, y la agrega a el ArrayList del mozo
-	public void cierraMesa(Comanda comanda)
+	/**
+	 * Metodo que abre una nueva comanda. <br>
+	 * Pre: nroMesa debe ser key del hashmap mesas del sistema <br>
+	 * Post: asocia la mesa con el numero de mesa pasado como parametro a una nueva
+	 * comanda. <br>
+	 * Post: La mesa pasa a estar ocupada. <br>
+	 * 
+	 * @param nroMesa numero de la mesa que se qujiere asociar a una nuerva comanda.
+	 *                <br>
+	 * @throws TodasMesasInhabilitadas_Exception  si el sistema no tiene ninguna
+	 *                                            mesa libre. <br>
+	 * @throws TodosMozosInactivos_Exception      si el sistema no tiene ningun mozo
+	 *                                            activo. <br>
+	 * @throws MenosDe2ProdsEnPromocion_Exception si el sistema no tiene minimo 2
+	 *                                            productos en promocion. <br>
+	 * @throws MozoNoActivo_Exception             si el mozo asociado a la mesa con
+	 *                                            el numero de mesa pasado como
+	 *                                            parametro no esta activo. <br>
+	 * @throws NoHayProductos_Exception           si el sistema no tiene productos.
+	 *                                            <br>
+	 * @throws MesaOcupada_Exception              si la mesa con el numero de mesa
+	 *                                            pasado como parametro esta
+	 *                                            ocupada. <br>
+	 */
+	public void abreComanda(int nroMesa) throws TodasMesasInhabilitadas_Exception, TodosMozosInactivos_Exception,
+			MenosDe2ProdsEnPromocion_Exception, MozoNoActivo_Exception, NoHayProductos_Exception, MesaOcupada_Exception
 	{
+
+		this.TodasMesasInhabilitadas();
+		this.TodosMozosInactivos();
+		this.MenosDe2ProdsEnPromocion();
+		Mesa mesa = Sistema.getInstance().getMesas().get(nroMesa);
+		if (!mesa.getMozo().getEstado().equals(Enumerados.estadoMozo.ACTIVO))
+			throw new MozoNoActivo_Exception(mesa.getMozo().getNyA());
+		if (Sistema.getInstance().getProductos().size() == 0)
+			throw new NoHayProductos_Exception();
+		if (!mesa.getEstado().equals(Enumerados.estadoMesa.LIBRE))
+			throw new MesaOcupada_Exception(nroMesa);
+
+		Sistema.getInstance().getComandas().put(nroMesa, new Comanda(mesa));
+		mesa.setEstado(Enumerados.estadoMesa.OCUPADA);
 	}
 
-	public void cierraComanda(Comanda comanda)
+	private void TodasMesasInhabilitadas() throws TodasMesasInhabilitadas_Exception
 	{
+		Iterator<Entry<Integer, Mesa>> it1 = Sistema.getInstance().getMesas().entrySet().iterator();
+		Entry<Integer, Mesa> entry1 = it1.next();
+		while (it1.hasNext() || !entry1.getValue().getEstado().equals(Enumerados.estadoMesa.LIBRE))
+			entry1 = it1.next();
+		if (!it1.hasNext())
+			throw new TodasMesasInhabilitadas_Exception();
 	}
 
-	// crea comanda
-	public void abreComanda(Mesa mesa)
+	private void TodosMozosInactivos() throws TodosMozosInactivos_Exception
 	{
+		Iterator<Entry<String, Mozo>> it2 = Sistema.getInstance().getMozos().entrySet().iterator();
+		Entry<String, Mozo> entry2 = it2.next();
+		while (it2.hasNext() || !entry2.getValue().getEstado().equals(Enumerados.estadoMozo.ACTIVO))
+			entry2 = it2.next();
+		if (!it2.hasNext())
+			throw new TodosMozosInactivos_Exception();
 	}
 
-	public void agregaPedidos(Comanda comanda, int cant, int idProd)
+	private void MenosDe2ProdsEnPromocion() throws MenosDe2ProdsEnPromocion_Exception
 	{
+		Iterator<Entry<Integer, PromocionProd>> it3 = Sistema.getInstance().getPromocionProds().entrySet().iterator();
+		int cant = 0;
+		while (it3.hasNext() || cant < 2)
+		{
+			Entry<Integer, PromocionProd> entry3 = it3.next();
+			if (entry3.getValue().isActiva())
+				cant++;
+		}
+		if (!it3.hasNext())
+			throw new MenosDe2ProdsEnPromocion_Exception();
+	}
+
+	/**
+	 * Metodo que agrega un pedido a la comanda. <br>
+	 * Pre: nroMesa debe ser key del hashmap mesas del sistema. <br>
+	 * Pre: idProd debe ser key del hashmap productos del sistema. <br>
+	 * Pre: cant debe ser mayor a 0. <br>
+	 * 
+	 * @param nroMesa numero de la mesa que esta asociada a la comqanda a la cual se
+	 *                le quiere agregar un pedido. <br>
+	 * @param idProd  id del producto que se quiere agregar a la comanda
+	 * @param cant    cantidad de producto que se quiere agregar a la comanda. <br>
+	 * @throws MesaNoTieneComanda_Exception si la mesa con el numero de mesa pasado
+	 *                                      como parametro no esta asociada a
+	 *                                      ninguna comanda. <br>
+	 * @throws StockInsuficiente_Exception  si se quiere agregar una cantidad mayor
+	 *                                      al stock del producto. <br>
+	 */
+	public void AgregaPedidoAComanda(int nroMesa, int idProd, int cant)
+			throws MesaNoTieneComanda_Exception, StockInsuficiente_Exception
+	{
+		if (!Sistema.getInstance().getComandas().containsKey(nroMesa))
+			throw new MesaNoTieneComanda_Exception(nroMesa);
+		Producto prod = Sistema.getInstance().getProductos().get(idProd);
+		if (prod.getStockActual() - cant < 0)
+			throw new StockInsuficiente_Exception();
+		Comanda comanda = Sistema.getInstance().getComandas().get(nroMesa);
+		comanda.getPedidos().add(new Pedido(prod, cant));
+		prod.setStockActual(prod.getStockActual() - cant);
+	}
+
+	/**
+	 * Metodo que cierra una comanda. <br>
+	 * Pre: nroMesa debe ser key del hashmap mesas del sistema. <br>
+	 * Pre: formaDePago debe ser distinto de null. <br>
+	 * Post: asocia la ganancia al mozo que atendio la mesa con el numero de mesa pasado como parametro (teniendo en cuenta la promociones). <br>
+	 * Post: cierra la comanda. <br>
+	 * Post: libera la mesa con el numero de mesa pasaddo como parametro. <br>
+	 * 
+	 * @param nroMesa numero de la mesa asociada a la comanda que se quiere cerrar. <br>
+	 * @param formaDePago forma de pago. <br>
+	 * @throws MesaNoTieneComanda_Exception si la mesa con el numero de mesa pasado como parametro no esat asociada a ninguna comanda. <br>
+	 * @throws ComandaYaCerrada_Exception si la comanda que se quiere cerrar ya fue cerrada previamente. <br>
+	 */
+	public void cierraComanda(int nroMesa, Enumerados.formaDePago formaDePago)
+			throws MesaNoTieneComanda_Exception, ComandaYaCerrada_Exception
+	{
+		double total = 0;
+		boolean aplicoPromProd = false;
+
+		if (!Sistema.getInstance().getComandas().containsKey(nroMesa))
+			throw new MesaNoTieneComanda_Exception(nroMesa);
+		if (Sistema.getInstance().getComandas().get(nroMesa).getEstado().equals(Enumerados.estadoComanda.CERRADO))
+			throw new ComandaYaCerrada_Exception(nroMesa);
+
+		Comanda comanda = Sistema.getInstance().getComandas().get(nroMesa);
+		ArrayList<Promocion> promos = new ArrayList<Promocion>();
+		total += this.procesaPromProds(comanda, aplicoPromProd, promos);
+		total *= this.procesaPromTemps(aplicoPromProd, formaDePago, promos);
+
+		comanda.getMesa().getMozo().getMesasAtendidas()
+				.add(new MesaAtendida(comanda.getMesa(), comanda.getPedidos(), total, formaDePago, promos));
+		comanda.setEstado(Enumerados.estadoComanda.CERRADO);
+		comanda.getMesa().setEstado(Enumerados.estadoMesa.LIBRE);
+
+	}
+
+	private double procesaPromProds(Comanda comanda, boolean aplicoPromProd, ArrayList<Promocion> promos)
+	{
+		double total = 0;
+		for (int i = 0; i < comanda.getPedidos().size(); i++)
+		{
+			Pedido pedido = comanda.getPedidos().get(i);
+			double precio = pedido.getProducto().getPrecioVenta();
+			if (Sistema.getInstance().getPromocionProds().containsKey(pedido.getProducto().getIdProd()))
+			{
+				PromocionProd promProd = Sistema.getInstance().getPromocionProds()
+						.get(pedido.getProducto().getIdProd());
+				if (promProd.getDiasDePromo().toString().equals(LocalDate.now().getDayOfWeek().toString())
+						&& promProd.isActiva())
+				{
+					if (promProd.isAplicaDtoPorCant() && (pedido.getCant() >= promProd.getDtoPorCant_CantMinima()))
+						precio *= (1 - promProd.getDtoPorCant_PrecioUnitario());
+					if (promProd.isAplica2x1())
+						precio /= 2;
+					aplicoPromProd = true;
+					promos.add(promProd);
+				}
+			}
+			total += precio * pedido.getCant();
+		}
+		return total;
+	}
+
+	private double procesaPromTemps(boolean aplicoPromProd, Enumerados.formaDePago formaDePago,
+			ArrayList<Promocion> promos)
+	{
+		double total = 1;
+		for (int i = 0; i < Sistema.getInstance().getPromocionTemps().size(); i++)
+		{
+			PromocionTemporal promTemp = Sistema.getInstance().getPromocionTemps().get(i);
+			if (promTemp.getDiasDePromo().toString().equals(LocalDate.now().getDayOfWeek().toString())
+					&& promTemp.getFormaDePago().equals(formaDePago) && promTemp.isActiva())
+			{
+				if (promTemp.isEsAcumulable() || aplicoPromProd == false)
+				{
+					total *= (1 - promTemp.getPorcentajeDesc());
+					promos.add(promTemp);
+				}
+			}
+		}
+		return total;
+	}
+
+	/**
+	 * metodo que calcula el promedio de venta de un mozo. <br>
+	 * Pre: nombre debe ser key del hashmap mozos del sistema. <br>
+	 * Post: devuleve el promedio de venta de un mozo. <br>
+	 * 
+	 * @param nombre nombre del mozo al que se le quiere saber el promedio. <br>
+	 * @return promedio de venta de un mozo. <br>
+	 */
+	public double estadisticasEmpleado(String nombre)
+	{
+		Mozo mozo = Sistema.getInstance().getMozos().get(nombre);
+		double promedioVenta = 0;
+		for (int i = 0; i < mozo.getMesasAtendidas().size(); i++)
+			promedioVenta += mozo.getMesasAtendidas().get(i).getTotal();
+		promedioVenta /= mozo.getMesasAtendidas().size();
+
+		return promedioVenta;
+	}
+/**
+ * metodo que calcula el mozo que mas ganancia dio al establecimiento. <br>
+ * @return mozo que mas ganancia dio al establecimiento. <br>
+ */
+	public Mozo empleadoConMayorVolumenDeVenta()
+	{
+		Mozo empleadoMax = null;
+		Mozo mozo = null;
+		double maxTotal = 0;
+
+		Iterator<Entry<String, Mozo>> it = Sistema.getInstance().getMozos().entrySet().iterator();
+		Entry<String, Mozo> entry = null;
+		while (it.hasNext())
+		{
+			entry = it.next();
+			mozo = entry.getValue();
+			double total = 0;
+			for (int j = 0; j < mozo.getMesasAtendidas().size(); j++)
+				total += mozo.getMesasAtendidas().get(j).getTotal();
+			if (total > maxTotal)
+			{
+				maxTotal = total;
+				empleadoMax = mozo;
+			}
+		}
+
+		return empleadoMax;
+	}
+
+/**
+ * metodo que calcula el mozo que menos ganancia dio al establecimiento. <br>
+ * @return mozo que menos ganancia dio al establecimiento. <br>
+ */
+	public Mozo empleadoConMenorVolumenDeVenta()
+	{
+		Mozo empleadoMin = null;
+		Mozo mozo = null;
+		double minTotal = 0;
+		boolean primero = false;
+
+		Iterator<Entry<String, Mozo>> it = Sistema.getInstance().getMozos().entrySet().iterator();
+		Entry<String, Mozo> entry = null;
+		while (it.hasNext())
+		{
+			entry = it.next();
+			mozo = entry.getValue();
+			double total = 0;
+			for (int j = 0; j < mozo.getMesasAtendidas().size(); j++)
+				total += mozo.getMesasAtendidas().get(j).getTotal();
+
+			if (!primero)
+			{
+				minTotal = total;
+				empleadoMin = mozo;
+				primero = true;
+			} else if (total < minTotal)
+			{
+				minTotal = total;
+				empleadoMin = mozo;
+			}
+		}
+
+		return empleadoMin;
+	}
+
+	/**
+	 * Metodo que calcula el promedio de ganancia que genero una mesa. <br> 
+	 * Pre: nroMesa debe ser key del hashmap mesas del sistema. <br>
+	 * @param nroMesa numero de la mesa que se quiere analizar. <br>
+	 * @return el promedio de ganancia que genero la mesa con el numero de mesa pasado como parametro. <br>
+	 */
+	public double consumoPromedioPorMesa(int nroMesa)
+	{
+		Iterator<Entry<String, Mozo>> it = Sistema.getInstance().getMozos().entrySet().iterator();
+		Entry<String, Mozo> entry = null;
+		double total = 0;
+		int cant = 0;
+		while (it.hasNext())
+		{
+			entry = it.next();
+			ArrayList<MesaAtendida> mesas = entry.getValue().getMesasAtendidas();
+			for (int i = 0; i < mesas.size(); i++)
+				if (mesas.get(i).getMesa().getNroMesa() == nroMesa)
+				{
+					total += mesas.get(i).getTotal();
+					cant++;
+				}
+		}
+		return total / cant;
 	}
 
 }

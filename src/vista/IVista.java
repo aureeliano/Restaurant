@@ -1,5 +1,8 @@
 package vista;
 
-public interface IVista {
+import java.awt.event.ActionListener;
 
+public interface IVista 
+{
+	void setActionListener(ActionListener actionListener);
 }

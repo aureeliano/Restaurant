@@ -12,8 +12,10 @@ import java.util.HashMap;
 import excepciones.ContrasenaIncorrecta_Exception;
 import excepciones.OperarioNoActivo_Exception;
 import excepciones.UserNameIncorrecto_Exception;
+import modelo.Administrador;
 import modelo.Cerveceria;
 import modelo.Comanda;
+import modelo.Enumerados;
 import modelo.Mesa;
 import modelo.Mozo;
 import modelo.Operario;
@@ -36,8 +38,8 @@ public class Sistema
 	private HashMap<String, Operario> operarios = Cerveceria.getInstance().getOperarios();
 	private HashMap<Integer, Mesa> mesas = Cerveceria.getInstance().getMesas();
 	private HashMap<Integer, PromocionProd> promocionProds = Cerveceria.getInstance().getPromocionProds();
-	private ArrayList<Comanda> comandas = Cerveceria.getInstance().getComandas();
-	private HashMap<String, PromocionTemporal> promocionTemps = Cerveceria.getInstance().getPromocionTemp();
+	private HashMap<Integer,Comanda> comandas = Cerveceria.getInstance().getComandas();
+	private ArrayList<PromocionTemporal> promocionTemps = Cerveceria.getInstance().getPromocionTemp();
 	private static Sistema instance = null;
 	private final String usernameADMIN = "ADMIN";
 	private final String passwordADMIN = "ADMIN1234";
@@ -77,12 +79,12 @@ public class Sistema
 		return promocionProds;
 	}
 
-	public ArrayList<Comanda> getComandas()
+	public HashMap<Integer,Comanda> getComandas()
 	{
 		return comandas;
 	}
 
-	public HashMap<String, PromocionTemporal> getPromocionTemps()
+	public ArrayList<PromocionTemporal> getPromocionTemps()
 	{
 		return promocionTemps;
 	}
@@ -101,31 +103,48 @@ public class Sistema
 	 * @throws ContrasenaIncorrecta_Exception la contrasenia es incorrecta.
 	 */
 
-	public FuncionalidadOperarios login(String username, String password)
+	public FuncionalidadOperarios login(String username, String password, String NyAAdmin, String nuevaPasswordAdmin)
 			throws UserNameIncorrecto_Exception, ContrasenaIncorrecta_Exception, OperarioNoActivo_Exception
 	{
 		FuncionalidadOperarios fO = null;
 		if (username.equals(this.usernameADMIN))
 		{
-			if (password.equals(this.passwordADMIN))
-				;// aca habria que cambiar la contrasena del admin pero no se como
-			if (this.operarios.get("ADMIN").getPassword().equals(password))
-				fO = new FuncionalidadAdmin(this.operarios.get("ADMIN"));
-			else
-				throw new ContrasenaIncorrecta_Exception();
+			fO = loginAdmin(password,NyAAdmin,nuevaPasswordAdmin);
 		} else if (operarios.containsKey(username))
-			if (operarios.get(username).getPassword().equals(password))
-			{
-				Operario op = operarios.get(username);
-				if (!op.isActivo())
-					throw new OperarioNoActivo_Exception(username);
-				else
-					fO = new FuncionalidadOperarios(op);
-			} else
-				throw new ContrasenaIncorrecta_Exception();
+			fO = loginOperario(username,password);
 		else
 			throw new UserNameIncorrecto_Exception(username);
 
+		return fO;
+	}
+	
+	private FuncionalidadAdmin loginAdmin(String password, String NyAAdmin, String nuevaPasswordAdmin) throws ContrasenaIncorrecta_Exception
+	{
+		FuncionalidadAdmin fA = null;
+		if (password.equals(this.passwordADMIN))
+			fA = new FuncionalidadAdmin(new Administrador(NyAAdmin, nuevaPasswordAdmin));
+		else if (this.operarios.get("ADMIN").getPassword().equals(password))
+			fA = new FuncionalidadAdmin(this.operarios.get("ADMIN"));
+		else
+			throw new ContrasenaIncorrecta_Exception();
+		
+		return fA;
+	}
+	
+	
+	private FuncionalidadOperarios loginOperario(String username, String password) throws OperarioNoActivo_Exception, ContrasenaIncorrecta_Exception
+	{
+		FuncionalidadOperarios fO = null;
+		if (operarios.get(username).getPassword().equals(password))
+		{
+			Operario op = operarios.get(username);
+			if (!op.isActivo())
+				throw new OperarioNoActivo_Exception(username);
+			else
+				fO = new FuncionalidadOperarios(op);
+		} else
+			throw new ContrasenaIncorrecta_Exception();
+		
 		return fO;
 	}
 

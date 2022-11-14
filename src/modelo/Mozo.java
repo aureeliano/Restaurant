@@ -1,13 +1,13 @@
 package modelo;
 
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
+import java.util.Date;
 
 public class Mozo
 {
 	private Enumerados.estadoMozo estado = Enumerados.estadoMozo.ACTIVO;;
 	private String NyA;
-	private GregorianCalendar fechaDeNacimiento;
+	private Date fechaDeNacimiento;
 	private int cantHijos;
 	private ArrayList<MesaAtendida> mesasAtendidas = new ArrayList<MesaAtendida>();
 	private double sueldo;
@@ -20,7 +20,7 @@ public class Mozo
 	 * @param NyA       perteneciente al nombre y apellido del mozo. <br>
 	 * @param cantHijos cantidad de hijos que tiene el mozo. <br>
 	 */
-	public Mozo(String NyA, GregorianCalendar fechaDeNacimiento, int cantHijos)
+	public Mozo(String NyA, Date fechaDeNacimiento, int cantHijos)
 	{
 		this.NyA = NyA;
 		this.fechaDeNacimiento = fechaDeNacimiento; // setear fecha DE NACIMIENTO

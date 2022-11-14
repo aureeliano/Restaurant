@@ -1,11 +1,11 @@
 package modelo;
 
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
+import java.util.Date;
 
 public class MesaAtendida {
 
-	private GregorianCalendar fecha;
+	private Date fecha = new Date();
 	private Mesa mesa;
 	private ArrayList<Pedido> pedidos = new ArrayList<Pedido>();
 	private double total;
@@ -13,16 +13,28 @@ public class MesaAtendida {
 	private ArrayList<Promocion> promociones = new ArrayList<Promocion>();
 	
 	
-	public MesaAtendida(GregorianCalendar fecha, Mesa mesa, ArrayList<Pedido> pedidos, double total,
+	public MesaAtendida(Mesa mesa, ArrayList<Pedido> pedidos, double total,
 			Enumerados.formaDePago formaDePago, ArrayList<Promocion> promociones) {
 		super();
-		this.fecha = fecha;
 		this.mesa = mesa;
 		this.pedidos = pedidos;
 		this.total = total;
 		this.formaDePago = formaDePago;
 		this.promociones = promociones;
 	}
+
+
+	public double getTotal()
+	{
+		return total;
+	}
+
+
+	public Mesa getMesa()
+	{
+		return mesa;
+	}
+	
 	
 	
 }
