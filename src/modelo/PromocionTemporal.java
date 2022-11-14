@@ -10,12 +10,8 @@ public class PromocionTemporal extends Promocion
     
     
 	public PromocionTemporal(modelo.Enumerados.diasDePromo diasDePromo, String nombre,
-<<<<<<< HEAD
 			modelo.Enumerados.formaDePago formaDePago, int porcentajeDesc, boolean esAcumulable)
 	{
-=======
-			modelo.Enumerados.formaDePago formaDePago, int porcentajeDesc, boolean esAcumulable) {
->>>>>>> 10ae6d0d26cfc1b7671875c768618c13423db803
 		super(diasDePromo);
 		this.nombre = nombre;
 		this.formaDePago = formaDePago;
@@ -24,11 +20,6 @@ public class PromocionTemporal extends Promocion
 	}
 
 
-
-<<<<<<< HEAD
-=======
-
->>>>>>> 10ae6d0d26cfc1b7671875c768618c13423db803
 	public int getPorcentajeDesc() {
 		return porcentajeDesc;
 	}
