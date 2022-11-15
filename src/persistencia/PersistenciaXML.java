@@ -36,7 +36,8 @@ public class PersistenciaXML implements IPersistencia
     @Override
     public void cerrarOutput() throws IOException
     {
-        this.xmlEncoder.close();
+    	if (fileoutput != null)
+    		this.xmlEncoder.close();
     }
 
     @Override

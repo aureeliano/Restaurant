@@ -3,7 +3,7 @@ package modelo;
 public class Mesa
 {
     private static int siguienteNroMesa = 0; //el 0 es la barra
-    private int nroMesa = siguienteNroMesa++;;
+    private int nroMesa = siguienteNroMesa++;
     private int cantSillas;
     private Enumerados.estadoMesa estado = Enumerados.estadoMesa.LIBRE;
     private Mozo mozo;

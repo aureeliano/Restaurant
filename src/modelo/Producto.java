@@ -1,6 +1,8 @@
 package modelo;
 
-public class Producto
+import java.io.Serializable;
+
+public class Producto implements Serializable
 {
     private static int siguienteIdProd = 0;
     private int idProd = siguienteIdProd++;
@@ -10,6 +12,8 @@ public class Producto
     private int stockInicial;
     private int stockActual;
     
+	public Producto() {}
+
 	/**
 	 * Pre: precioCosto debe ser mayor a 0. <br>
 	 * Pre: precioVenta debe ser mayor a 0. <br>
@@ -85,10 +89,5 @@ public class Producto
 	{
 		this.stockActual = stockActual;
 	}
-    
-	
-    
-
-    
     
 }
