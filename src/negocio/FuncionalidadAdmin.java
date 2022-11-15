@@ -111,7 +111,7 @@ public class FuncionalidadAdmin extends FuncionalidadOperarios
 			Sistema.getInstance().getOperarios().put(username, new Operario(NyA, username, password));
 	}
 
-	private boolean PasswordValida(String password)
+	public boolean PasswordValida(String password)
 	{
 		boolean mayuscula = false;
 		boolean digito = false;
@@ -130,7 +130,6 @@ public class FuncionalidadAdmin extends FuncionalidadOperarios
 			}
 		}
 		return (mayuscula && digito);
-
 	}
 
 	/**
