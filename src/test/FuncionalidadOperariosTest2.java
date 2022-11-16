@@ -29,7 +29,6 @@ import modelo.Mesa;
 import modelo.MesaAtendida;
 import modelo.Mozo;
 import modelo.Operario;
-import modelo.Pedido;
 import modelo.Producto;
 import modelo.PromocionProd;
 import modelo.PromocionTemporal;
@@ -226,6 +225,17 @@ public class FuncionalidadOperariosTest2 {
 			Assert.fail("No deberia lanzar excepcion");
 		}
 	}
+	
+	@Test
+	public void testAgregaPromocionTemporalIncorrecto() {
+		try {
+			this.func.agregaPromocionTemporal(Enumerados.diasDePromo.FRIDAY, "Promo1", Enumerados.formaDePago.CTADNI,
+					20, false);
+			Assert.fail("Deberia lanzar excepcion");
+		} catch (PromocionTemporalNombreRepetido_Exception e) {
+			
+		}
+	}
 
 	@Test
 	public void testEliminaPromocionTemporal() {
@@ -274,7 +284,7 @@ public class FuncionalidadOperariosTest2 {
 	}
 
 	@Test
-	public void testAsignaMozoAMesaIncorrecto1() {
+	public void testAsignaMozoAMesaInexistente() {
 		try {
 			this.func.asignaMozoAMesa(78, "Juan");
 			Assert.fail("Deberia lanzar excepcion de que no existe mesa");
@@ -285,7 +295,35 @@ public class FuncionalidadOperariosTest2 {
 			
 		}
 	}
+	
+	@Test
+	public void testAsignaMozoInexistenteAMesa() {
+		try {
+			this.func.asignaMozoAMesa(78, "Peter");
+			Assert.fail("Deberia lanzar excepcion de que no existe mozo");
+			
+		} catch (MozoNoActivo_Exception e) {
+			Assert.fail("No deberia lanzar excepcion");
+		} catch (NoExisteEnLaColeccion_Exception e) {
+			
+		}
+	}
 
+	@Test
+	public void testAsignaMozoInactivoAMesa() {
+		try {
+			/*Mozo mozoNuevo = new Mozo("Pelado", new Date(1,2,1938), 3);
+			mozoNuevo.setEstado(Enumerados.estadoMozo.AUSENTE);
+			Sistema.getInstance().getMozos().put("Pelado", mozoNuevo);*/
+			this.mozo2.setEstado(Enumerados.estadoMozo.AUSENTE);
+			this.func.asignaMozoAMesa(this.mesa0.getNroMesa(), mozo2.getNyA());
+			Assert.fail("Deberia lanzar excepcion de mozo inactivo");
+			
+		} catch (MozoNoActivo_Exception e) {
+		} catch (NoExisteEnLaColeccion_Exception e) {
+			Assert.fail("No deberia lanzar excepcion");
+		}
+	}
 	
 	@Test
 	public void testAbreComandaCorrecto() {
@@ -397,7 +435,7 @@ public class FuncionalidadOperariosTest2 {
 	}
 	
 	@Test
-	public void testAgregaPedidoAComandaIncorrecto() {
+	public void testAgregaPedidoAComandaSinMesaAsoc() {
 		try {
 			//Sistema.getInstance().getComandas().put(this.mesa0.getNroMesa(), com);
 			this.func.AgregaPedidoAComanda(this.mesa0.getNroMesa(), this.prod1.getIdProd(), 1);
@@ -412,7 +450,7 @@ public class FuncionalidadOperariosTest2 {
 	}
 	
 	@Test
-	public void testAgregaPedidoAComandaIncorrecto1() {
+	public void testAgregaPedidoAComandaSinStock() {
 		try {
 			Sistema.getInstance().getComandas().put(this.mesa0.getNroMesa(), com);
 			this.func.AgregaPedidoAComanda(this.mesa0.getNroMesa(), this.prod1.getIdProd(), 16);
@@ -425,9 +463,24 @@ public class FuncionalidadOperariosTest2 {
 			Assert.fail("No deberia lanzar excepcion");
 		}
 	}
+	
+	@Test
+	public void testAgregaPedidoNoExistenteAComanda() {
+		try {
+			Sistema.getInstance().getComandas().put(this.mesa0.getNroMesa(), com);
+			Producto p  = new Producto("Lima", 1, 68, 20);
+			this.func.AgregaPedidoAComanda(this.mesa0.getNroMesa(), p.getIdProd(), 16);
+			Assert.fail("Se deberia lanzar excepcion de que no existe el producto");
+		} catch (MesaNoTieneComanda_Exception e) {
+			Assert.fail("No deberia lanzar excepcion");			
+		} catch (StockInsuficiente_Exception e) {			
+			Assert.fail("No deberia lanzar excepcion");
+		} catch (NoExisteEnLaColeccion_Exception e) {
+		}
+	}
 
 	@Test
-	public void testCierraComandaIncorrecto() {
+	public void testCierraComandaInexistente() {
 		try {
 			this.func.cierraComanda(46, Enumerados.formaDePago.CTADNI);
 			Assert.fail("Deberia lanzar excepcion");
@@ -446,6 +499,7 @@ public class FuncionalidadOperariosTest2 {
 			this.mesa0.setMozo(mozo1);
 			Sistema.getInstance().getComandas().put(this.mesa0.getNroMesa(), com);
 			this.func.cierraComanda(this.mesa0.getNroMesa(), Enumerados.formaDePago.CTADNI);
+			Assert.assertTrue("El estado deberia ser cerrado", this.com.getEstado()==Enumerados.estadoComanda.CERRADO);
 		} catch (MesaNoTieneComanda_Exception e) {
 			Assert.fail("No deberia lanzar excepcion");
 		} catch (ComandaYaCerrada_Exception e) {
@@ -453,7 +507,23 @@ public class FuncionalidadOperariosTest2 {
 		} catch (NoExisteEnLaColeccion_Exception e) {
 			Assert.fail("No deberia lanzar excepcion");
 		}
-		Assert.assertTrue("El estado deberia ser cerrado", this.com.getEstado()==Enumerados.estadoComanda.CERRADO);
+	}
+	
+	@Test
+	public void testCierraComandaNoAsociada() {
+		try {
+			com.setEstado(Enumerados.estadoComanda.ABIERTO);
+			this.mesa0.setMozo(mozo1);
+			//Sistema.getInstance().getComandas().put(this.mesa0.getNroMesa(), com);
+			this.func.cierraComanda(this.mesa0.getNroMesa(), Enumerados.formaDePago.CTADNI);
+			Assert.fail("Deberia lanzar excepcion");
+		} catch (MesaNoTieneComanda_Exception e) {
+			
+		} catch (ComandaYaCerrada_Exception e) {
+			Assert.fail("No deberia lanzar excepcion");
+		} catch (NoExisteEnLaColeccion_Exception e) {
+			Assert.fail("No deberia lanzar excepcion");
+		}
 	}
 	
 	@Test
@@ -481,10 +551,10 @@ public class FuncionalidadOperariosTest2 {
 		try {
 			res = this.func.estadisticasEmpleado(this.mozo1.getNyA());
 			//System.out.println(res);
-			Assert.assertTrue("No se calculan las estadisticas", res>=0);
 		} catch (NoExisteEnLaColeccion_Exception e) {
 			Assert.fail("No deberia lanzar excepcion");
 		}
+		Assert.assertTrue("No se calculan las estadisticas", res>=0);
 	}
 	
 	@Test
