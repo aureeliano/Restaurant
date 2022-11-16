@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 
 import excepciones.ContrasenaInvalida_Exception;
 import excepciones.MozoMenorDeEdad_Exception;
+import excepciones.NoExisteEnLaColeccion_Exception;
 import excepciones.NoPuedeHaberMasDe6Mozos_Exception;
 import excepciones.NyARepetido_Exception;
 import excepciones.ProductoEstaEnComanda_Exception;
@@ -76,13 +77,18 @@ public class FuncionalidadAdmin extends FuncionalidadOperarios
 
 	/**
 	 * Metodo que elimina un Mozo del sistema. <br>
-	 * Pre: NyA debe ser key del hashmap mozos del sistema <br>
+	 * Pre: NyA debe ser distinto de null o vacio. <br>
 	 * 
 	 * @param NyA atributo que representa el nombre y el apellido del mozo que se
 	 *            desea eliminar.
+	 * @throws NoExisteEnLaColeccion_Exception si NyA no es key del hashmap mozos de
+	 *                                         Sistema. <br>
+	 * 
 	 */
-	public void eliminaMozo(String NyA)
+	public void eliminaMozo(String NyA) throws NoExisteEnLaColeccion_Exception
 	{
+		if (!Sistema.getInstance().getMozos().containsKey(NyA))
+			throw new NoExisteEnLaColeccion_Exception(NyA);
 		Sistema.getInstance().getMozos().remove(NyA);
 	}
 
@@ -97,8 +103,11 @@ public class FuncionalidadAdmin extends FuncionalidadOperarios
 	 *                 agregar. <br>
 	 * @param password atributo que representa la password del operario que se desea
 	 *                 agregar. <br>
-	 * @throws UserNameRepetido_Exception si e username ya le pertenece a otro operario. <br>
-	 * @throws ContrasenaInvalida_Exception si la contrasenia no cumple que contiene entre 6 y 12 caracteres con al menos 1 digito y 1 mayuscula 
+	 * @throws UserNameRepetido_Exception   si e username ya le pertenece a otro
+	 *                                      operario. <br>
+	 * @throws ContrasenaInvalida_Exception si la contrasenia no cumple que contiene
+	 *                                      entre 6 y 12 caracteres con al menos 1
+	 *                                      digito y 1 mayuscula
 	 */
 	public void agregaOperario(String NyA, String username, String password)
 			throws UserNameRepetido_Exception, ContrasenaInvalida_Exception
@@ -130,32 +139,42 @@ public class FuncionalidadAdmin extends FuncionalidadOperarios
 			}
 		}
 		return (mayuscula && digito);
+
 	}
 
 	/**
 	 * Metodo que activa o desactiva a un operario. <br>
-	 * Pre: username debe ser key del hashmap operarios del sistema <br>
+	 * Pre: username debe ser distinto de null o vacio. <br>
 	 * Post: se cambia el estado del operario con el username pasado como parametro.
 	 * <br>
 	 * 
 	 * @param username username del oprario a modificar. <br>
 	 * @param activo   se activa o desactiva el operario.<br>
+	 * @throws NoExisteEnLaColeccion_Exception si username no es key del hashmap
+	 *                                         operarios de Sistema. <br>
 	 */
-	public void activaDesactivaOperario(String username, boolean activo)
+	public void activaDesactivaOperario(String username, boolean activo) throws NoExisteEnLaColeccion_Exception
 	{
+		if (!Sistema.getInstance().getOperarios().containsKey(username))
+			throw new NoExisteEnLaColeccion_Exception(username);
 		Sistema.getInstance().getOperarios().get(username).setActivo(activo);
 	}
 
 	/**
 	 * Metodo que elimina un operario del sistema. <br>
-	 * Pre: username debe ser key del hashmap operarios del sistema <br>
-	 * Post: Se elimina un operario del sistema. <br>
+	 * Pre: username debe ser distinto de null o vacio. <br>
+	 * * Post: Se elimina un operario del sistema. <br>
 	 * 
 	 * @param username atributo que representa el userName del operario que se desea
 	 *                 eliminar.
+	 * @throws NoExisteEnLaColeccion_Exception si username no es key del hashmap
+	 *                                         operarios de Sistema. <br>
+	 * 
 	 */
-	public void eliminaOperario(String username)
+	public void eliminaOperario(String username) throws NoExisteEnLaColeccion_Exception
 	{
+		if (!Sistema.getInstance().getOperarios().containsKey(username))
+			throw new NoExisteEnLaColeccion_Exception(username);
 		Sistema.getInstance().getOperarios().remove(username);
 	}
 
@@ -184,7 +203,7 @@ public class FuncionalidadAdmin extends FuncionalidadOperarios
 	/**
 	 * metodo para modificar los stocks del producto. <br>
 	 * 
-	 * Pre: id debe ser key del hashmap productos del sistema <br>
+	 * Pre: id no debe ser negativo. <br>
 	 * Pre: stockInicial debe ser mayor a 0. <br>
 	 * Pre: stockActual debe ser menor o igual a stockInicial. <br>
 	 * Post: se modifican los stocks del objeto pasado como parametro. <br>
@@ -192,13 +211,20 @@ public class FuncionalidadAdmin extends FuncionalidadOperarios
 	 * @param id           id del producto a modificar. <br>
 	 * @param stockInicial nuevo stock inicial. <br>
 	 * @param stockActual  nuevo stock actual. <br>
+	 * @throws NoExisteEnLaColeccion_Exception si id no es key del hashmap productos de Sistema. <br>
+
 	 */
 	public void modificaStockDeProducto(int id, int stockInicial, int stockActual)
+			throws NoExisteEnLaColeccion_Exception
 	{
+		if (!Sistema.getInstance().getProductos().containsKey(id))
+			throw new NoExisteEnLaColeccion_Exception(Integer.toString(id));
 		Producto prod = Sistema.getInstance().getProductos().get(id);
 		prod.setStockInicial(stockInicial);
 		prod.setStockActual(stockActual);
 	}
+
+	
 
 	/*
 	 * Pau: si no se hace lista desplegable o botones, o sea ingreso por teclado el
@@ -211,17 +237,21 @@ public class FuncionalidadAdmin extends FuncionalidadOperarios
 
 	/**
 	 * Metodo que elimina un producto del sistema. <br>
-	 * Pre: idProd debe ser key del hashmap productos del sistema <br>
+	 * Pre: idProd no debe ser negativo. <br>
 	 * Post: Se elimina un producto del sistema. <br>
 	 * 
 	 * @param idProd atributo que representa el id del producto que se desea
 	 *               eliminar del sistema.
 	 * @throws ProductoEstaEnComanda_Exception si el producto que se quiere elminar
 	 *                                         se encuentra en una comanda.
+	 * @throws NoExisteEnLaColeccion_Exception si idProd no es key del hashmap productos de Sistema. <br>
+
 	 */
-	public void eliminaProducto(int idProd) throws ProductoEstaEnComanda_Exception
+	public void eliminaProducto(int idProd) throws ProductoEstaEnComanda_Exception, NoExisteEnLaColeccion_Exception
+
 	{
-		Producto prod = Sistema.getInstance().getProductos().get(idProd);
+		if(!Sistema.getInstance().getProductos().containsKey(idProd))
+			throw new NoExisteEnLaColeccion_Exception(Integer.toString(idProd));Producto prod = Sistema.getInstance().getProductos().get(idProd);
 		boolean estaEnComanda = false;
 		Iterator<Entry<Integer, Comanda>> it = Sistema.getInstance().getComandas().entrySet().iterator();
 		Entry<Integer, Comanda> entry = null;
@@ -242,6 +272,8 @@ public class FuncionalidadAdmin extends FuncionalidadOperarios
 			throw new ProductoEstaEnComanda_Exception(prod.getNombre());
 		Sistema.getInstance().getProductos().remove(idProd);
 	}
+	
+	
 
 	/**
 	 * Metodo que agrega una mesa al sistema. <br>
@@ -273,14 +305,18 @@ public class FuncionalidadAdmin extends FuncionalidadOperarios
 
 	/**
 	 * Metodo que elimina una mesa del sistema. <br>
-	 * Pre: nroMesqa debe ser key del hashmap mesas del sistema <br>
+	 * Pre: nroMesa no debe ser negativo. <br>
 	 * Post: Se elimina una mesa del sistema. <br>
 	 * 
 	 * @param numeroMesa atributo que representa la mesa que se desea eliminar.
+     * @throws NoExisteEnLaColeccion_Exception si nroMesa no es key del hashmap mmesas de Sistema. <br>
 	 */
-	public void eliminaMesa(int nroMesa)
+	public void eliminaMesa(int nroMesa)throws NoExisteEnLaColeccion_Exception
+
 	{
+		if(!Sistema.getInstance().getMesas().containsKey(nroMesa))
+			throw new NoExisteEnLaColeccion_Exception(Integer.toString(nroMesa));
 		Sistema.getInstance().getMesas().remove(nroMesa);
 	}
-
+	
 }

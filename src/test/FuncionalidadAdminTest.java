@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import excepciones.ContrasenaInvalida_Exception;
 import excepciones.MozoMenorDeEdad_Exception;
+import excepciones.NoExisteEnLaColeccion_Exception;
 import excepciones.NoPuedeHaberMasDe6Mozos_Exception;
 import excepciones.NyARepetido_Exception;
 import excepciones.ProductoEstaEnComanda_Exception;
@@ -105,8 +106,12 @@ public class FuncionalidadAdminTest {
 	
 	@Test
 	public void testEliminaMozo() {
-		this.func.eliminaMozo("Juan Perez");
-		Assert.fail("Deberia tirar excepcion de que no existe el mozo a eliminar");
+		try {
+			this.func.eliminaMozo("Juan Perez");
+			Assert.fail("Deberia tirar excepcion de que no existe el mozo a eliminar");
+		} catch (NoExisteEnLaColeccion_Exception e) {
+			
+		}
 	}
 	
 	
@@ -137,8 +142,12 @@ public class FuncionalidadAdminTest {
 	
 	@Test
 	public void testEliminaOperario() {
-		this.func.eliminaOperario("hernan");
-		Assert.fail("Deberia tirar excepcion de que no existe el mozo a eliminar");
+		try {
+			this.func.eliminaOperario("hernan");
+			Assert.fail("Deberia tirar excepcion de que no existe el mozo a eliminar");
+		} catch (NoExisteEnLaColeccion_Exception e) {
+			
+		}
 	}
 	
 	@Test
@@ -178,6 +187,7 @@ public class FuncionalidadAdminTest {
 			Assert.fail("Deberia lanzar excepcion de que no existe el producto");
 		} catch (ProductoEstaEnComanda_Exception e) {
 			Assert.fail("No  se debe lanzar esta excepcion");
+		} catch (NoExisteEnLaColeccion_Exception e) {
 		}
 	}
 	
@@ -196,7 +206,11 @@ public class FuncionalidadAdminTest {
 	
 	@Test
 	public void testEliminaMesa() {
-		this.func.eliminaMesa(0);
-		Assert.fail("Deberia lanzar excepcion de que no existe la mesa");
+		try {
+			this.func.eliminaMesa(0);
+			Assert.fail("Deberia lanzar excepcion de que no existe la mesa");
+		} catch (NoExisteEnLaColeccion_Exception e) {
+		
+		}
 	}
 }

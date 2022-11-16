@@ -10,6 +10,7 @@ import excepciones.MenosDe2ProdsEnPromocion_Exception;
 import excepciones.MesaNoTieneComanda_Exception;
 import excepciones.MesaOcupada_Exception;
 import excepciones.MozoNoActivo_Exception;
+import excepciones.NoExisteEnLaColeccion_Exception;
 import excepciones.NoHayProductos_Exception;
 import excepciones.NroMesaRepetido_Exception;
 import excepciones.NyARepetido_Exception;
@@ -95,7 +96,7 @@ public class FuncionalidadOperarios
 	/**
 	 * metodo para modificar el/los atributos del mozo que se desee. <br>
 	 * 
-	 * Pre: NyA debe ser key del hashmap mozos del sistema <br>
+	 * Pre: username debe ser distinto de null o vacio. <br>
 	 * Pre: nuevoNyA debe ser distinto de null y vacio. <br>
 	 * Pre: cantHijos debe ser igual a 0 o mayor. <br>
 	 * Post: se modifican los atributos del objeto pasado como parametro. <br>
@@ -103,11 +104,17 @@ public class FuncionalidadOperarios
 	 * @param NyA       nombre y apellido del mozo a modificar.
 	 * @param nuevoNyA  nombre y apellido nuevo.
 	 * @param cantHijos nueva cantidad de hijos.
-	 * @throws NyARepetido_Exception se lanza cuando se intenta cambiar el nombre de
-	 *                               un mozo por uno que ya posee otro mozo.
+	 * @throws NyARepetido_Exception           se lanza cuando se intenta cambiar el
+	 *                                         nombre de un mozo por uno que ya
+	 *                                         posee otro mozo.
+	 * @throws NoExisteEnLaColeccion_Exception si NyA no es key del hashmap mozos de
+	 *                                         Sistema. <br>
 	 */
-	public void modificaMozo(String NyA, String nuevoNyA, int cantHijos) throws NyARepetido_Exception
+	public void modificaMozo(String NyA, String nuevoNyA, int cantHijos)
+			throws NyARepetido_Exception, NoExisteEnLaColeccion_Exception
 	{
+		if (!Sistema.getInstance().getMozos().containsKey(NyA))
+			throw new NoExisteEnLaColeccion_Exception(NyA);
 		Mozo mozo = Sistema.getInstance().getMozos().get(NyA);
 		if (!mozo.getNyA().equals(nuevoNyA) && Sistema.getInstance().getMozos().containsKey(nuevoNyA))
 			throw new NyARepetido_Exception(nuevoNyA);
@@ -122,16 +129,21 @@ public class FuncionalidadOperarios
 
 	/**
 	 * metodo que cambia el estado de un mozo. <br>
-	 * Pre: NyA debe ser key del hashmap mozos del sistema <br>
+	 * Pre: NyA debe ser distinto de null o vacio. <br>
 	 * Pre: nuevoEstado debe ser disitinto de null. <br>
 	 * Post: se cambia el atributo estado del mozo. <br>
 	 * 
 	 * @param NyA         nombre y apellido del mozo al que se le cambia el estado.
 	 *                    <br>
 	 * @param nuevoEstado nuevo estado que se le cambia el mozo. <br>
+	 * @throws NoExisteEnLaColeccion_Exception si NyA no es key del hashmap mozos de
+	 *                                         Sistema. <br>
 	 */
-	public void cambiaEstadoMozo(String NyA, Enumerados.estadoMozo nuevoEstado)
+	public void cambiaEstadoMozo(String NyA, Enumerados.estadoMozo nuevoEstado) throws NoExisteEnLaColeccion_Exception
+
 	{
+		if (!Sistema.getInstance().getMozos().containsKey(NyA))
+			throw new NoExisteEnLaColeccion_Exception(NyA);
 		Mozo mozo = Sistema.getInstance().getMozos().get(NyA);
 		mozo.setEstado(nuevoEstado);
 	}
@@ -139,7 +151,7 @@ public class FuncionalidadOperarios
 	/**
 	 * metodo para modificar el/los atributos que se deseen del producto. <br>
 	 * 
-	 * Pre: id debe ser key del hashmap productos del sistema <br>
+	 * Pre: id no debe ser negativo. <br>
 	 * Pre: nombre debe ser distinto de null y vacio. <br>
 	 * Pre: precioCosto debe ser mayor a 0 y menor que precioVenta. <br>
 	 * Pre: precioVenta debe ser mayor a 0 y mayor que precioCosto. <br>
@@ -149,9 +161,15 @@ public class FuncionalidadOperarios
 	 * @param nombre      nuevo nombre del producto. <br>
 	 * @param precioCosto nuevo precio de costo. <br>
 	 * @param precioVenta nuevo precio de venta. <br>
+	 * @throws NoExisteEnLaColeccion_Exception si id no es key del hashmap productos
+	 *                                         de Sistema. <br>
 	 */
 	public void modificaProducto(int id, String nombre, double precioCosto, double precioVenta)
+			throws NoExisteEnLaColeccion_Exception
+
 	{
+		if (!Sistema.getInstance().getProductos().containsKey(id))
+			throw new NoExisteEnLaColeccion_Exception(Integer.toString(id));
 		Producto prod = Sistema.getInstance().getProductos().get(id);
 		prod.setNombre(nombre);
 		prod.setPrecioCosto(precioCosto);
@@ -161,7 +179,7 @@ public class FuncionalidadOperarios
 	/**
 	 * metodo para modificar el/los atributos que se deseen de la mesa. <br>
 	 * 
-	 * Pre: nroMesa debe ser key del hashmap mesas del sistema <br>
+	 * Pre: nroMesa no debe ser negativo <br>
 	 * Pre: cantSillas debe ser mayor a 0. <br>
 	 * Post: se modifican los atributos del objeto pasado como parametro. <br>
 	 * 
@@ -169,12 +187,18 @@ public class FuncionalidadOperarios
 	 * @param nroMesa    numero de la mesa a modificar. <br>
 	 * @param cantSillas cantidad de personas que ocuparan la mesa. <br>
 	 * @param libre      estado de la mesa. <br>
-	 * @throws NroMesaRepetido_Exception Se lanza si se intenta asignar un numero de
-	 *                                   mesa existente.
+	 * @throws NroMesaRepetido_Exception       Se lanza si se intenta asignar un
+	 *                                         numero de mesa existente.
+	 * @throws NoExisteEnLaColeccion_Exception si nroMesa no es key del hashmap
+	 *                                         mesas de Sistema. <br>
 	 */
 
-	public void modificaMesa(int nroMesa, int cantSillas, Enumerados.estadoMesa estado) throws NroMesaRepetido_Exception
+	public void modificaMesa(int nroMesa, int cantSillas, Enumerados.estadoMesa estado)
+			throws NroMesaRepetido_Exception, NoExisteEnLaColeccion_Exception
+
 	{
+		if (!Sistema.getInstance().getMesas().containsKey(nroMesa))
+			throw new NoExisteEnLaColeccion_Exception(Integer.toString(nroMesa));
 		Mesa mesa = Sistema.getInstance().getMesas().get(nroMesa);
 		mesa.setCantSillas(cantSillas);
 		mesa.setEstado(estado);
@@ -214,29 +238,39 @@ public class FuncionalidadOperarios
 
 	/**
 	 * metodo para modificar el estado de un producto en promocion.<br>
-	 * Pre: idProm debe ser key del hashmap promocionProds del sistema <br>
+	 * Pre: idProm no debe ser negativo. <br>
 	 * Post: se cambia el atributo activa del objeto promocionProd. <br>
 	 * 
 	 * @param idProm id del producto con promocion a modificar. <br>
 	 * @param activa nuevo estado de la promocion. <br>
+	 * @throws NoExisteEnLaColeccion_Exception si idProm no es key del hashmap
+	 *                                         promocionProds de Sistema. <br>
 	 */
 
-	public void modificaPromocionProd(int idProm, boolean activa)
+	public void modificaPromocionProd(int idProm, boolean activa) throws NoExisteEnLaColeccion_Exception
+
 	{
+		if (!Sistema.getInstance().getPromocionProds().containsKey(idProm))
+			throw new NoExisteEnLaColeccion_Exception(Integer.toString(idProm));
 		Sistema.getInstance().getPromocionProds().get(idProm).setActiva(activa);
 		;
 	}
 
 	/**
 	 * metodo que elimina un producto en promocion. <br>
-	 * Pre: idProm debe ser key del hashmap promocionProds del sistema <br>
+	 * Pre: idProm no debe ser negativo <br>
 	 * Post: se elimina el producto en promocion del sistema. <br>
 	 * 
 	 * @param idProms id del producto con promocion a eliminar. <br>
+	 * @throws NoExisteEnLaColeccion_Exception si idProm no es key del hashmap
+	 *                                         promocionProds de Sistema. <br>
 	 */
 
-	public void eliminaPromocionProd(int idProm)
+	public void eliminaPromocionProd(int idProm) throws NoExisteEnLaColeccion_Exception
+
 	{
+		if (!Sistema.getInstance().getPromocionProds().containsKey(idProm))
+			throw new NoExisteEnLaColeccion_Exception(Integer.toString(idProm));
 		Sistema.getInstance().getPromocionProds().remove(idProm);
 	}
 
@@ -279,51 +313,72 @@ public class FuncionalidadOperarios
 
 	/**
 	 * metodo que elimina una promocion temporal del sistema. <br>
-	 * Pre: nombre debe ser key del hashmap promocionTemps del sistema <br>
+	 * Pre: nombre debe ser distinto de null o vacio. <br>
 	 * Post: se elimina una promocion temporal del sistema. <br>
 	 * 
 	 * @param nombre nombre de la promocion temporal a eliminar. <br>
+	 * @throws NoExisteEnLaColeccion_Exception si la promocion con el nombre pasado
+	 *                                         como parametro no existe en el
+	 *                                         arraylist promocionTemps de Sistema.
+	 *                                         <br>
 	 */
-	public void eliminaPromocionTemporal(String nombre)
+	public void eliminaPromocionTemporal(String nombre) throws NoExisteEnLaColeccion_Exception
+
 	{
 		ArrayList<PromocionTemporal> promoTemps = Sistema.getInstance().getPromocionTemps();
 		int i = 0;
 		while (i < promoTemps.size() && !promoTemps.get(i).getNombre().equals(nombre))
 			i++;
+		if (i == promoTemps.size())
+			throw new NoExisteEnLaColeccion_Exception(nombre);
 		promoTemps.remove(i);
 	}
 
 	/**
 	 * metodo para modificar el estado de una promocion temporal.<br>
-	 * Pre: nombre debe ser key del hashmap promocionTemps del sistema <br>
+	 * Pre: nombre debe ser distinto de null o vacio. <br>
 	 * Post: se cambia el atributo activa del objeto promocionTemporal. <br>
 	 * 
 	 * @param nommbre nombre de la promocion a modificar. <br>
 	 * @param activa  nuevo estado de la promocion. <br>
+	 * @throws NoExisteEnLaColeccion_Exception si la promocion con el nombre pasado
+	 *                                         como parametro no existe en el
+	 *                                         arraylist promocionTemps de Sistema.
+	 *                                         <br>
 	 */
-	public void modificaPromocionTemporal(String nombre, boolean activo)
+	public void modificaPromocionTemporal(String nombre, boolean activo) throws NoExisteEnLaColeccion_Exception
 	{
 		ArrayList<PromocionTemporal> promoTemps = Sistema.getInstance().getPromocionTemps();
 		int i = 0;
 		while (i < promoTemps.size() && !promoTemps.get(i).getNombre().equals(nombre))
 			i++;
+		if (i == promoTemps.size())
+			throw new NoExisteEnLaColeccion_Exception(nombre);
 		promoTemps.get(i).setActiva(activo);
 	}
 
 	/**
 	 * metodo que asigna un mozo a una mesa. <br>
-	 * Pre: nroMesa debe ser key del hashmap mesas del sistema <br>
-	 * Pre: NyA debe ser key del hashmap mozos del sistema <br>
+	 * Pre: NroMesa no debe ser negativo. <br>
+	 * Pre: NyA debe ser distinto de null o vacio. <br>
 	 * Post: se le asigna el mozo al atributo mozo de la mesa pasada como parametro.
 	 * <br>
 	 * 
 	 * @param nroMesa numero de la mesa a la cual se le asigna el mozo. <br>
 	 * @param NyA     nombre del mozo que se le asigna a la mesa. <br>
-	 * @throws MozoNoActivo_Exception si el mozo que se le quiere asignar a la mesa
-	 *                                no esta activo
+	 * @throws MozoNoActivo_Exception          si el mozo que se le quiere asignar a
+	 *                                         la mesa no esta activo
+	 * @throws NoExisteEnLaColeccion_Exception si nroMesa no es key del hashmap
+	 *                                         mesas de Sistema o si NyA no es key
+	 *                                         del hashmap mozos de Sistema.. <br>
 	 */
-	public void asignaMozoAMesa(int nroMesa, String NyA) throws MozoNoActivo_Exception
+	public void asignaMozoAMesa(int nroMesa, String NyA) throws MozoNoActivo_Exception, NoExisteEnLaColeccion_Exception
+
 	{
+		if (!Sistema.getInstance().getMesas().containsKey(nroMesa))
+			throw new NoExisteEnLaColeccion_Exception(Integer.toString(nroMesa));
+		if (!Sistema.getInstance().getMozos().containsKey(NyA))
+			throw new NoExisteEnLaColeccion_Exception(NyA);
 		Mozo mozo = Sistema.getInstance().getMozos().get(NyA);
 		if (mozo.getEstado().equals(Enumerados.estadoMozo.ACTIVO))
 			Sistema.getInstance().getMesas().get(nroMesa).setMozo(mozo);
@@ -333,7 +388,7 @@ public class FuncionalidadOperarios
 
 	/**
 	 * Metodo que abre una nueva comanda. <br>
-	 * Pre: nroMesa debe ser key del hashmap mesas del sistema <br>
+	 * Pre: nroMesa no debe ser negativo. <br>
 	 * Post: asocia la mesa con el numero de mesa pasado como parametro a una nueva
 	 * comanda. <br>
 	 * Post: La mesa pasa a estar ocupada. <br>
@@ -354,9 +409,15 @@ public class FuncionalidadOperarios
 	 * @throws MesaOcupada_Exception              si la mesa con el numero de mesa
 	 *                                            pasado como parametro esta
 	 *                                            ocupada. <br>
+	 * @throws NoExisteEnLaColeccion_Exception    si nroMesa no es key del hashmap
+	 *                                            mesas de Sistema. <br>
 	 */
-	public void abreComanda(int nroMesa) throws TodasMesasInhabilitadas_Exception, TodosMozosInactivos_Exception,MenosDe2ProdsEnPromocion_Exception, MozoNoActivo_Exception, NoHayProductos_Exception, MesaOcupada_Exception
+	public void abreComanda(int nroMesa)
+			throws TodasMesasInhabilitadas_Exception, TodosMozosInactivos_Exception, MenosDe2ProdsEnPromocion_Exception,
+			MozoNoActivo_Exception, NoHayProductos_Exception, MesaOcupada_Exception, NoExisteEnLaColeccion_Exception
 	{
+		if (!Sistema.getInstance().getMesas().containsKey(nroMesa))
+			throw new NoExisteEnLaColeccion_Exception(Integer.toString(nroMesa));
 		this.TodasMesasInhabilitadas();
 		this.TodosMozosInactivos();
 		this.MenosDe2ProdsEnPromocion();
@@ -408,23 +469,30 @@ public class FuncionalidadOperarios
 
 	/**
 	 * Metodo que agrega un pedido a la comanda. <br>
-	 * Pre: nroMesa debe ser key del hashmap mesas del sistema. <br>
-	 * Pre: idProd debe ser key del hashmap productos del sistema. <br>
+	 * Pre: nroMesa no debe ser negativo. <br>
+	 * Pre: idProd no debe ser negativo. <br>
 	 * Pre: cant debe ser mayor a 0. <br>
 	 * 
 	 * @param nroMesa numero de la mesa que esta asociada a la comqanda a la cual se
 	 *                le quiere agregar un pedido. <br>
 	 * @param idProd  id del producto que se quiere agregar a la comanda
 	 * @param cant    cantidad de producto que se quiere agregar a la comanda. <br>
-	 * @throws MesaNoTieneComanda_Exception si la mesa con el numero de mesa pasado
-	 *                                      como parametro no esta asociada a
-	 *                                      ninguna comanda. <br>
-	 * @throws StockInsuficiente_Exception  si se quiere agregar una cantidad mayor
-	 *                                      al stock del producto. <br>
+	 * @throws MesaNoTieneComanda_Exception    si la mesa con el numero de mesa
+	 *                                         pasado como parametro no esta
+	 *                                         asociada a ninguna comanda. <br>
+	 * @throws StockInsuficiente_Exception     si se quiere agregar una cantidad
+	 *                                         mayor al stock del producto. <br>
+	 * @throws NoExisteEnLaColeccion_Exception si nroMesa no es key del hashmap
+	 *                                         mesas de Sistema o si idProd no es key del hashmap
+	 *                                         productos de Sistema. <br>
 	 */
 	public void AgregaPedidoAComanda(int nroMesa, int idProd, int cant)
-			throws MesaNoTieneComanda_Exception, StockInsuficiente_Exception
+			throws MesaNoTieneComanda_Exception, StockInsuficiente_Exception, NoExisteEnLaColeccion_Exception
 	{
+		if (!Sistema.getInstance().getMesas().containsKey(nroMesa))
+			throw new NoExisteEnLaColeccion_Exception(Integer.toString(nroMesa));
+		if (!Sistema.getInstance().getProductos().containsKey(idProd))
+			throw new NoExisteEnLaColeccion_Exception(Integer.toString(idProd));
 		if (!Sistema.getInstance().getComandas().containsKey(nroMesa))
 			throw new MesaNoTieneComanda_Exception(nroMesa);
 		Producto prod = Sistema.getInstance().getProductos().get(idProd);
@@ -435,23 +503,33 @@ public class FuncionalidadOperarios
 		prod.setStockActual(prod.getStockActual() - cant);
 	}
 
+	
+
 	/**
 	 * Metodo que cierra una comanda. <br>
-	 * Pre: nroMesa debe ser key del hashmap mesas del sistema. <br>
+	 * Pre: nroMesa no debe ser negativo. <br>
 	 * Pre: formaDePago debe ser distinto de null. <br>
-	 * Post: asocia la ganancia al mozo que atendio la mesa con el numero de mesa pasado como parametro (teniendo en cuenta la promociones). <br>
+	 * Post: asocia la ganancia al mozo que atendio la mesa con el numero de mesa
+	 * pasado como parametro (teniendo en cuenta la promociones). <br>
 	 * Post: cierra la comanda. <br>
 	 * Post: libera la mesa con el numero de mesa pasaddo como parametro. <br>
 	 * 
-	 * @param nroMesa numero de la mesa asociada a la comanda que se quiere cerrar. <br>
+	 * @param nroMesa     numero de la mesa asociada a la comanda que se quiere
+	 *                    cerrar. <br>
 	 * @param formaDePago forma de pago. <br>
-	 * @throws MesaNoTieneComanda_Exception si la mesa con el numero de mesa pasado como parametro no esat asociada a ninguna comanda. <br>
-	 * @throws ComandaYaCerrada_Exception si la comanda que se quiere cerrar ya fue cerrada previamente. <br>
+	 * @throws MesaNoTieneComanda_Exception si la mesa con el numero de mesa pasado
+	 *                                      como parametro no esat asociada a
+	 *                                      ninguna comanda. <br>
+	 * @throws ComandaYaCerrada_Exception   si la comanda que se quiere cerrar ya
+	 *                                      fue cerrada previamente. <br>
+	 * @throws NoExisteEnLaColeccion_Exception si nroMesa no es key del hashmap mesas de Sistema. <br>
 	 */
 	public void cierraComanda(int nroMesa, Enumerados.formaDePago formaDePago)
-			throws MesaNoTieneComanda_Exception, ComandaYaCerrada_Exception
-	{
-		double total = 0;
+			throws MesaNoTieneComanda_Exception, ComandaYaCerrada_Exception, NoExisteEnLaColeccion_Exception
+			{
+				if(!Sistema.getInstance().getMesas().containsKey(nroMesa))
+					throw new NoExisteEnLaColeccion_Exception(Integer.toString(nroMesa));
+				double total = 0;
 		boolean aplicoPromProd = false;
 
 		if (!Sistema.getInstance().getComandas().containsKey(nroMesa))
@@ -470,6 +548,8 @@ public class FuncionalidadOperarios
 		comanda.getMesa().setEstado(Enumerados.estadoMesa.LIBRE);
 
 	}
+	
+	
 
 	private double procesaPromProds(Comanda comanda, boolean aplicoPromProd, ArrayList<Promocion> promos)
 	{
@@ -520,15 +600,19 @@ public class FuncionalidadOperarios
 
 	/**
 	 * metodo que calcula el promedio de venta de un mozo. <br>
-	 * Pre: nombre debe ser key del hashmap mozos del sistema. <br>
+	 * Pre: NyA debe ser distinto de null o vacio. <br>
 	 * Post: devuleve el promedio de venta de un mozo. <br>
 	 * 
 	 * @param nombre nombre del mozo al que se le quiere saber el promedio. <br>
 	 * @return promedio de venta de un mozo. <br>
+	 * @throws NoExisteEnLaColeccion_Exception si NyA no es key del hashmap mozos de Sistema. <br>
 	 */
-	public double estadisticasEmpleado(String nombre)
+	public double estadisticasEmpleado(String NyA) throws NoExisteEnLaColeccion_Exception
+
 	{
-		Mozo mozo = Sistema.getInstance().getMozos().get(nombre);
+		if(!Sistema.getInstance().getMozos().containsKey(NyA))
+			throw new NoExisteEnLaColeccion_Exception(NyA);
+		Mozo mozo = Sistema.getInstance().getMozos().get(NyA);
 		double promedioVenta = 0;
 		for (int i = 0; i < mozo.getMesasAtendidas().size(); i++)
 			promedioVenta += mozo.getMesasAtendidas().get(i).getTotal();
@@ -536,10 +620,12 @@ public class FuncionalidadOperarios
 
 		return promedioVenta;
 	}
-/**
- * metodo que calcula el mozo que mas ganancia dio al establecimiento. <br>
- * @return mozo que mas ganancia dio al establecimiento. <br>
- */
+
+	/**
+	 * metodo que calcula el mozo que mas ganancia dio al establecimiento. <br>
+	 * 
+	 * @return mozo que mas ganancia dio al establecimiento. <br>
+	 */
 	public Mozo empleadoConMayorVolumenDeVenta()
 	{
 		Mozo empleadoMax = null;
@@ -565,10 +651,11 @@ public class FuncionalidadOperarios
 		return empleadoMax;
 	}
 
-/**
- * metodo que calcula el mozo que menos ganancia dio al establecimiento. <br>
- * @return mozo que menos ganancia dio al establecimiento. <br>
- */
+	/**
+	 * metodo que calcula el mozo que menos ganancia dio al establecimiento. <br>
+	 * 
+	 * @return mozo que menos ganancia dio al establecimiento. <br>
+	 */
 	public Mozo empleadoConMenorVolumenDeVenta()
 	{
 		Mozo empleadoMin = null;
@@ -602,13 +689,18 @@ public class FuncionalidadOperarios
 	}
 
 	/**
-	 * Metodo que calcula el promedio de ganancia que genero una mesa. <br> 
-	 * Pre: nroMesa debe ser key del hashmap mesas del sistema. <br>
+	 * Metodo que calcula el promedio de ganancia que genero una mesa. <br>
+	 * Pre: nroMesa no debe ser negativo. <br>
+	 * 
 	 * @param nroMesa numero de la mesa que se quiere analizar. <br>
-	 * @return el promedio de ganancia que genero la mesa con el numero de mesa pasado como parametro. <br>
+	 * @return el promedio de ganancia que genero la mesa con el numero de mesa
+	 *         pasado como parametro. <br>
+	 * @throws NoExisteEnLaColeccion_Exception si nroMesa no es key del hashmap mesas de Sistema. <br>
 	 */
-	public double consumoPromedioPorMesa(int nroMesa)
+	public double consumoPromedioPorMesa(int nroMesa) throws NoExisteEnLaColeccion_Exception
 	{
+		if(!Sistema.getInstance().getMesas().containsKey(nroMesa))
+			throw new NoExisteEnLaColeccion_Exception(Integer.toString(nroMesa));
 		Iterator<Entry<String, Mozo>> it = Sistema.getInstance().getMozos().entrySet().iterator();
 		Entry<String, Mozo> entry = null;
 		double total = 0;
@@ -626,5 +718,6 @@ public class FuncionalidadOperarios
 		}
 		return total / cant;
 	}
+
 
 }
