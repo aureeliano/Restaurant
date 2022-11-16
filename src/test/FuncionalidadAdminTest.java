@@ -68,6 +68,16 @@ public class FuncionalidadAdminTest {
 		Mozo mozo = Sistema.getInstance().getMozos().get("Juan Perez");
 		Assert.assertNotNull("El mozo deberia estar en la coleccion de mozos", mozo);
 	}
+	@Test
+	public void activaDesactivaOperario() {
+		try {
+			this.func.activaDesactivaOperario("Rodrigo Palumbo", false);
+			Assert.fail("Deberia lanzarse excepcion");
+		} catch (NoExisteEnLaColeccion_Exception e) {
+			
+		}
+	}
+	
 	
 	@Test
 	public void testAgregaMozoIncorrecto3() {

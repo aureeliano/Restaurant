@@ -73,6 +73,7 @@ public class FuncionalidadAdminTest2 {
 		Assert.assertNotNull("El mozo deberia estar en la coleccion de mozos", mozo);
 	}
 	
+	
 	@Test
 	public void testAgregaMozoIncorrecto() {
 		try {
@@ -139,6 +140,18 @@ public class FuncionalidadAdminTest2 {
 	}
 
 	@Test
+	public void activaDesactivaOperario() {
+		Sistema.getInstance().getOperarios().put("Rodrigo Palumbo", new Operario("Rodrigo Palumbo", "rodri", "Rodri1234"));
+		try {
+			this.func.activaDesactivaOperario("Rodrigo Palumbo", false);
+			Assert.assertFalse("Se deberia haber modificado el estado del operario",
+					Sistema.getInstance().getOperarios().get("Rodrigo Palumbo").isActivo());
+		} catch (NoExisteEnLaColeccion_Exception e) {
+			Assert.fail("No deberia lanzarse excepcion");
+		}
+	}
+	
+	@Test
 	public void testEliminaMozoCorrecto() {
 		try {
 			this.func.eliminaMozo("JuanPerez");
@@ -157,7 +170,7 @@ public class FuncionalidadAdminTest2 {
 			Assert.fail("Deberia lanzarse excepcion de que no existe el mozo a eliminar");
 		} catch (NoExisteEnLaColeccion_Exception e) {
 			
-		}
+		} 
 	}
 	
 	@Test
