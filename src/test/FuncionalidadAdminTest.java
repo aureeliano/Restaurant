@@ -70,6 +70,20 @@ public class FuncionalidadAdminTest {
 	}
 	
 	@Test
+	public void testAgregaMozoIncorrecto3() {
+		try {
+			this.func.agregaMozo("JuanPe", -1, -1, 1983, 5);
+			Assert.fail("Deberia lanzarse excepcion");
+		} catch (NyARepetido_Exception e) {
+			Assert.fail("No deberia lanzarse excepcion");
+		} catch (NoPuedeHaberMasDe6Mozos_Exception e) {
+			Assert.fail("No deberia lanzarse excepcion");
+		} catch (MozoMenorDeEdad_Exception e) {
+			Assert.fail("No deberia lanzarse excepcion");
+		}
+	}
+	
+	@Test
 	public void testAgregaMozoIncorrecto1() {
 		try {
 			this.func.agregaMozo("Rodrigo Hernandez", 5, 6, 1999, 0);	
