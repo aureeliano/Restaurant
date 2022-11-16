@@ -1,12 +1,15 @@
 package modelo;
 
-public class Promocion
+import java.io.Serializable;
+
+public class Promocion implements Serializable
 {
 
 	private boolean activa = true;
 	private Enumerados.diasDePromo diasDePromo;
 	
 	
+	public Promocion() {}
 	
 	public Promocion(Enumerados.diasDePromo diasDePromo)
 	{
@@ -24,6 +27,9 @@ public class Promocion
 	public Enumerados.diasDePromo getDiasDePromo()
 	{
 		return diasDePromo;
+	}
+	public void setDiasDePromo(Enumerados.diasDePromo diasDePromo) {
+		this.diasDePromo = diasDePromo;
 	}
 	
 	

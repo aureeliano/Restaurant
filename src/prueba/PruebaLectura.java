@@ -5,6 +5,7 @@ import java.io.IOException;
 import modelo.Cerveceria;
 import persistencia.CerveceriaDTO;
 import persistencia.IPersistencia;
+import persistencia.PersistenciaBIN;
 import persistencia.PersistenciaXML;
 
 public class PruebaLectura {

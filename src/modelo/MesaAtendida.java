@@ -1,9 +1,11 @@
 package modelo;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class MesaAtendida {
+public class MesaAtendida implements Serializable
+{
 
 	private Date fecha = new Date();
 	private Mesa mesa;
@@ -24,6 +26,9 @@ public class MesaAtendida {
 	}
 
 
+	public MesaAtendida() {}
+
+	
 	public double getTotal()
 	{
 		return total;
@@ -33,6 +38,56 @@ public class MesaAtendida {
 	public Mesa getMesa()
 	{
 		return mesa;
+	}
+
+
+	public Date getFecha() {
+		return fecha;
+	}
+
+
+	public ArrayList<Pedido> getPedidos() {
+		return pedidos;
+	}
+
+
+	public Enumerados.formaDePago getFormaDePago() {
+		return formaDePago;
+	}
+
+
+	public ArrayList<Promocion> getPromociones() {
+		return promociones;
+	}
+
+
+	public void setFecha(Date fecha) {
+		this.fecha = fecha;
+	}
+
+
+	public void setMesa(Mesa mesa) {
+		this.mesa = mesa;
+	}
+
+
+	public void setPedidos(ArrayList<Pedido> pedidos) {
+		this.pedidos = pedidos;
+	}
+
+
+	public void setTotal(double total) {
+		this.total = total;
+	}
+
+
+	public void setFormaDePago(Enumerados.formaDePago formaDePago) {
+		this.formaDePago = formaDePago;
+	}
+
+
+	public void setPromociones(ArrayList<Promocion> promociones) {
+		this.promociones = promociones;
 	}
 	
 	

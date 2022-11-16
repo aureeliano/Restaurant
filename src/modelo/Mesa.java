@@ -1,6 +1,8 @@
 package modelo;
 
-public class Mesa
+import java.io.Serializable;
+
+public class Mesa implements Serializable
 {
     private static int siguienteNroMesa = 0; //el 0 es la barra
     private int nroMesa = siguienteNroMesa++;
@@ -10,14 +12,17 @@ public class Mesa
     
 	/**
 	 * Pre: cantSillas debe ser > =2 cuando el nro de mesa es > 1
-	 * @param nroMesa
-	 * @param cantPax
+	 * @param cantSillas
 	 */
     public Mesa(int cantSillas)
 	{
 		super();
 		this.cantSillas = cantSillas;
 	}
+
+    
+	public Mesa() {}
+	
 
 	public int getNroMesa()
 	{
@@ -59,8 +64,9 @@ public class Mesa
 		return siguienteNroMesa;
 	}
 
+	public void setNroMesa(int nroMesa) {
+		this.nroMesa = nroMesa;
+	}
 
-    
-    
 }
 

@@ -52,9 +52,18 @@ public class Cerveceria {
 	public ArrayList<PromocionTemporal> getPromocionTemp() {
 		return promocionTemp;
 	}
-	
-	
-	
+
+	public void setMozos(HashMap<String, Mozo> mozos) {
+		this.mozos = mozos;
+	}
+
+	public void setProductos(HashMap<Integer, Producto> productos) {
+		this.productos = productos;
+	}
+
+	public void setComandas(HashMap<Integer, Comanda> comandas) {
+		this.comandas = comandas;
+	}
 	
 	
 }

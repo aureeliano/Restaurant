@@ -14,7 +14,7 @@ public class Mozo
 
 	/**
 	 * Constructor de cada mozo. <br>
-	 * Pre: el mozo debe ser mayor a 18 a�os. <br>
+	 * Pre: el mozo debe ser mayor a 18 anios. <br>
 	 * Pre: la cantidad de hijos debe ser >= 0. <br>
 	 * 
 	 * @param NyA       perteneciente al nombre y apellido del mozo. <br>
@@ -68,4 +68,9 @@ public class Mozo
 		return sueldo;
 	}
 
+	public Date getFechaDeNacimiento() {
+		return fechaDeNacimiento;
+	}
+
+	
 }

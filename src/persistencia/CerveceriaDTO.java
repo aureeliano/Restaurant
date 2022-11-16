@@ -3,6 +3,7 @@ package persistencia;
 import java.io.Serializable;
 import java.util.HashMap;
 
+import modelo.Mozo;
 import modelo.Producto;
 
 public class CerveceriaDTO implements Serializable
@@ -20,8 +21,8 @@ public class CerveceriaDTO implements Serializable
 	}
 
 
-	public void setMozos(HashMap<String, MozoDTO> mozos) {
-		this.mozos = mozos;
+	public void setMozos(HashMap<String, MozoDTO> hashMap) {
+		this.mozos = hashMap;
 	}
 
 

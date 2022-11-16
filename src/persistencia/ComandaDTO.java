@@ -11,7 +11,7 @@ import modelo.Pedido;
 public class ComandaDTO implements Serializable
 {
 	private GregorianCalendar fecha;
-    private MesaDTO mesa;
+    private Mesa mesa;
     private ArrayList<Pedido> pedidos;
     private Enumerados.estadoComanda estado;
 	
@@ -29,12 +29,12 @@ public class ComandaDTO implements Serializable
 	}
 
 
-	public MesaDTO getMesa() {
+	public Mesa getMesa() {
 		return mesa;
 	}
 
 
-	public void setMesa(MesaDTO mesa) {
+	public void setMesa(Mesa mesa) {
 		this.mesa = mesa;
 	}
 

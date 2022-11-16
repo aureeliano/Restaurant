@@ -46,6 +46,10 @@ public class Comanda
 	{
 		return pedidos;
 	}
+
+	public GregorianCalendar getFecha() {
+		return fecha;
+	}
     
 	
     

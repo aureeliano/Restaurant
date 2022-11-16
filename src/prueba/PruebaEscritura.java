@@ -5,6 +5,7 @@ import java.io.IOException;
 import modelo.Cerveceria;
 import persistencia.CerveceriaDTO;
 import persistencia.IPersistencia;
+import persistencia.PersistenciaBIN;
 import persistencia.PersistenciaXML;
 import persistencia.UtilCerveceria;
 
@@ -13,7 +14,7 @@ public class PruebaEscritura {
 	public static void main(String[] args) 
 	{
 		IPersistencia persistencia = new PersistenciaXML();
-	    // IPersistencia persistencia = new PersistenciaBIN();
+	    //IPersistencia persistencia = new PersistenciaBIN();
 		Cerveceria cerveceria = new Cerveceria();
 		
 		/*

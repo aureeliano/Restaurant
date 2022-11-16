@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import modelo.Enumerados;
+import modelo.MesaAtendida;
 
 public class MozoDTO implements Serializable
 {
@@ -12,7 +13,7 @@ public class MozoDTO implements Serializable
 	private String NyA;
 	private Date fechaDeNacimiento;
 	private int cantHijos;
-	private ArrayList<MesaAtendidaDTO> mesasAtendidas = new ArrayList<MesaAtendidaDTO>();
+	private ArrayList<MesaAtendida> mesasAtendidas = new ArrayList<MesaAtendida>();
 	private double sueldo;
 	
 	
@@ -59,12 +60,12 @@ public class MozoDTO implements Serializable
 	}
 
 
-	public ArrayList<MesaAtendidaDTO> getMesasAtendidas() {
+	public ArrayList<MesaAtendida> getMesasAtendidas() {
 		return mesasAtendidas;
 	}
 
 
-	public void setMesasAtendidas(ArrayList<MesaAtendidaDTO> mesasAtendidas) {
+	public void setMesasAtendidas(ArrayList<MesaAtendida> mesasAtendidas) {
 		this.mesasAtendidas = mesasAtendidas;
 	}
 
