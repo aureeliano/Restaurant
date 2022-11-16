@@ -641,7 +641,7 @@ public class FuncionalidadOperarios
 			double total = 0;
 			for (int j = 0; j < mozo.getMesasAtendidas().size(); j++)
 				total += mozo.getMesasAtendidas().get(j).getTotal();
-			if (total > maxTotal)
+			if (total >= maxTotal)
 			{
 				maxTotal = total;
 				empleadoMax = mozo;

@@ -7,7 +7,6 @@ public class Promocion
 	private Enumerados.diasDePromo diasDePromo;
 	
 	
-	
 	public Promocion(Enumerados.diasDePromo diasDePromo)
 	{
 		super();
