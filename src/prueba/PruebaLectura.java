@@ -7,6 +7,7 @@ import persistencia.CerveceriaDTO;
 import persistencia.IPersistencia;
 import persistencia.PersistenciaBIN;
 import persistencia.PersistenciaXML;
+import persistencia.UtilCerveceria;
 
 public class PruebaLectura {
 
@@ -23,6 +24,7 @@ public class PruebaLectura {
 			//persistencia.abrirInput("Cerveceria.BIN");
 			System.out.println("Archivo abierto");
 			CerveceriaDTO cervDTO = (CerveceriaDTO) persistencia.leer();
+			UtilCerveceria.cerveceriafromCerveceriaDTO(cervDTO);
 			
 			System.out.println("Cerveceria grabada exitosamente");
 			persistencia.cerrarInput();
