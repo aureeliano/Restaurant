@@ -1,4 +1,4 @@
-package negocio;
+package test;
 
 import static org.junit.Assert.fail;
 
@@ -13,10 +13,16 @@ import excepciones.ContrasenaInvalida_Exception;
 import excepciones.MozoMenorDeEdad_Exception;
 import excepciones.NoPuedeHaberMasDe6Mozos_Exception;
 import excepciones.NyARepetido_Exception;
+import excepciones.ProductoEstaEnComanda_Exception;
+import excepciones.SilasDebenSerMayoresA1CuandoNroMesaMayorA1_Exception;
 import excepciones.UserNameRepetido_Exception;
 import modelo.Administrador;
+import modelo.Mesa;
 import modelo.Mozo;
 import modelo.Operario;
+import modelo.Producto;
+import negocio.FuncionalidadAdmin;
+import negocio.Sistema;
 
 public class FuncionalidadAdminTest {
 	
@@ -36,19 +42,15 @@ public class FuncionalidadAdminTest {
 		Sistema.getInstance().getMesas().clear();
 		Sistema.getInstance().getOperarios().clear();
 		Sistema.getInstance().getProductos().clear();
-		//Sistema.getInstance().getPromocionProds().clear();
-		//Sistema.getInstance().getPromocionTemps().clear();
-		//Sistema.getInstance().getComandas().clear();
 		//se ejecuta antes de cada metodo
 	}
 
 	@After
 	public void tearDown() throws Exception {
-	}
-
-	@Test
-	public void testAgregaMozo() {
-		fail("Not yet implemented");
+		Sistema.getInstance().getMozos().clear();
+		Sistema.getInstance().getMesas().clear();
+		Sistema.getInstance().getOperarios().clear();
+		Sistema.getInstance().getProductos().clear();
 	}
 	
 	@Test
@@ -62,22 +64,8 @@ public class FuncionalidadAdminTest {
 		} catch (MozoMenorDeEdad_Exception e) {
 			Assert.fail("No deberia lanzarse excepcion");
 		}
-		Mozo mozo = Sistema.getInstance().getMozos().get("Juan Prez");
+		Mozo mozo = Sistema.getInstance().getMozos().get("Juan Perez");
 		Assert.assertNotNull("El mozo deberia estar en la coleccion de mozos", mozo);
-	}
-	
-	@Test
-	public void testAgregaMozoIncorrecto() {
-		try {
-			this.func.agregaMozo("Juan Perez", 5, 6, 1999, 0);	
-			Assert.fail("Se deberia haber lanzado excepcion");
-		} catch (NyARepetido_Exception e) {
-			
-		} catch (NoPuedeHaberMasDe6Mozos_Exception e) {
-			Assert.fail("No deberia lanzarse excepcion de tipo NoPuedeHaberMasDe6Mozos");
-		} catch (MozoMenorDeEdad_Exception e) {
-			Assert.fail("No deberia lanzarse excepcion de tipo MozoMenorDeEdad_Exception");
-		}
 	}
 	
 	@Test
@@ -88,7 +76,8 @@ public class FuncionalidadAdminTest {
 			this.func.agregaMozo("Sarmiento", 5, 6, 1999, 0);	
 			this.func.agregaMozo("Juan Pz", 5, 6, 1999, 0);	
 			this.func.agregaMozo("Susana Perez", 5, 6, 1999, 0);	
-			this.func.agregaMozo("Cristian Perez", 5, 6, 1999, 0);	
+			this.func.agregaMozo("Cristian Perez", 5, 6, 1999, 0);
+			this.func.agregaMozo("Cristian U", 5, 6, 1999, 0);
 			Assert.fail("Se deberia haber lanzado excepcion");
 		} catch (NyARepetido_Exception e) {
 			Assert.fail("No deberia lanzarse excepcion de tipo NyARepetido_Exception");
@@ -113,17 +102,11 @@ public class FuncionalidadAdminTest {
 		}
 	}
 	
-	@Test
-	public void testEliminaMozoCorrecto() {
-		this.func.eliminaMozo("Juan Perez");
-		Mozo mozo = Sistema.getInstance().getMozos().get("Juan Perez");
-		Assert.assertNull("El mozo NO deberia estar en la coleccion de mozos", mozo);
-	}
 	
 	@Test
-	public void testEliminaMozoIncorrecto() {
-		this.func.eliminaMozo("Luis Miguel");
-		Assert.fail("Deberia lanzarse excepcion de que no existe el mozo");
+	public void testEliminaMozo() {
+		this.func.eliminaMozo("Juan Perez");
+		Assert.fail("Deberia tirar excepcion de que no existe el mozo a eliminar");
 	}
 	
 	
@@ -136,19 +119,10 @@ public class FuncionalidadAdminTest {
 		} catch (ContrasenaInvalida_Exception e) {
 			Assert.fail("No deberia lanzarse excepcion");
 		}
+		Operario op = Sistema.getInstance().getOperarios().get("hernan");
+		Assert.assertNotNull("El operario deberia estar en la coleccion de operarios", op);
 	}
-	
-	@Test
-	public void testAgregaOperarioIncorrecto() {
-		try {
-			this.func.agregaOperario("Hernan Cristian", "hernan", "Cristian123");
-			Assert.fail("Deberia lanzarse excepcion de tipo UserNameRepetido_Exception");
-		} catch (UserNameRepetido_Exception e) {
-			
-		} catch (ContrasenaInvalida_Exception e) {
-			Assert.fail("No deberia lanzarse excepcion");
-		}
-	}
+
 	
 	@Test
 	public void testAgregaOperarioIncorrecto2() {
@@ -162,16 +136,9 @@ public class FuncionalidadAdminTest {
 	}
 	
 	@Test
-	public void testEliminaOperarioCorrecto() {
+	public void testEliminaOperario() {
 		this.func.eliminaOperario("hernan");
-		Operario op = Sistema.getInstance().getOperarios().get("hernan");
-		Assert.assertNull("El operario deberia haber sido eliminado");
-	}
-	
-	@Test
-	public void testEliminaOperarioIncorrecto() {
-		this.func.eliminaOperario("pepe");
-		Assert.fail("Deberia lanzar excepcion de que no existe el operario a eliminar");
+		Assert.fail("Deberia tirar excepcion de que no existe el mozo a eliminar");
 	}
 	
 	@Test
@@ -188,60 +155,48 @@ public class FuncionalidadAdminTest {
 		Assert.assertFalse("La contrasenia NO deberia ser valida", res);
 	}
 
+/*	NO PODEMOS OBTENER EL ESTADO PARA TESTEARLO
 	@Test
 	public void testActivaDesactivaOperario() {
 		this.func.activaDesactivaOperario("hernan", false);
+		Sistema.getInstance().log
 		Assert.assertFalse("Deberia estar inactivo el operario", Sistema.getInstance().getOperarios().get("hernan").get);
 	}
+	*/
 	
 	@Test
 	public void testAgregaProductoCorrecto() {
-		fail("Not yet implemented");
-	}
-	
-	@Test
-	public void testAgregaProductoIncorrecto() {
-		fail("Not yet implemented");
-	}
-	
-	@Test
-	public void testEliminaProductoCorrecto() {
-		fail("Not yet implemented");
+		this.func.agregaProducto("Pizza", 10, 20, 10);
+		Producto producto = Sistema.getInstance().getProductos().get(0);
+		Assert.assertNotNull("El producto deberia estar en la coleccion de productos", producto);
 	}
 	
 	@Test
 	public void testEliminaProductoIncorrecto() {
-		fail("Not yet implemented");
-	}
-	
-	@Test
-	public void testModificaStockProductoCorrecto() {
-		fail("Not yet implemented");
-	}
-	
-	@Test
-	public void testModificaStockProductoIncorrecto() {
-		fail("Not yet implemented");
+		try {
+			this.func.eliminaProducto(0);
+			Assert.fail("Deberia lanzar excepcion de que no existe el producto");
+		} catch (ProductoEstaEnComanda_Exception e) {
+			Assert.fail("No  se debe lanzar esta excepcion");
+		}
 	}
 	
 
 	@Test
 	public void testAgregaMesaCorrecto() {
-		fail("Not yet implemented");
+		try {
+			this.func.agregaMesa(1);
+		} catch (SilasDebenSerMayoresA1CuandoNroMesaMayorA1_Exception e) {
+			Assert.fail("No se debe lanzar esta excepcion");
+		}
+		Mesa mesa = Sistema.getInstance().getMesas().get(0);
+		Assert.assertNotNull("Se deberia haber agregado la mesa", mesa);
 	}
+
 	
 	@Test
-	public void testAgregaMesaIncorrecto() {
-		fail("Not yet implemented");
-	}
-	
-	@Test
-	public void testEliminaMesaCorrecto() {
-		fail("Not yet implemented");
-	}
-	
-	@Test
-	public void testEliminaMesaIncorrecto() {
-		fail("Not yet implemented");
+	public void testEliminaMesa() {
+		this.func.eliminaMesa(0);
+		Assert.fail("Deberia lanzar excepcion de que no existe la mesa");
 	}
 }

@@ -355,10 +355,8 @@ public class FuncionalidadOperarios
 	 *                                            pasado como parametro esta
 	 *                                            ocupada. <br>
 	 */
-	public void abreComanda(int nroMesa) throws TodasMesasInhabilitadas_Exception, TodosMozosInactivos_Exception,
-			MenosDe2ProdsEnPromocion_Exception, MozoNoActivo_Exception, NoHayProductos_Exception, MesaOcupada_Exception
+	public void abreComanda(int nroMesa) throws TodasMesasInhabilitadas_Exception, TodosMozosInactivos_Exception,MenosDe2ProdsEnPromocion_Exception, MozoNoActivo_Exception, NoHayProductos_Exception, MesaOcupada_Exception
 	{
-
 		this.TodasMesasInhabilitadas();
 		this.TodosMozosInactivos();
 		this.MenosDe2ProdsEnPromocion();
