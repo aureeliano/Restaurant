@@ -44,6 +44,8 @@ public class FuncionalidadOperariosTest {
 
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
+		Sistema.getInstance().getOperarios().remove("juancito");
+
 	}
 
 	@Before

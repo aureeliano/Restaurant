@@ -86,13 +86,13 @@ public class FuncionalidadOperariosTest2 {
 	@Test
 	public void testModificaOperarioCorrecto() {
 		try {
-			this.func.modificaOperario("Juan Perez", "juanPerezzz", "Juan123");
+			this.func.modificaOperario("Juan Perez", "juanPerezz", "Juan123");
 		} catch (UserNameRepetido_Exception e) {
 			Assert.fail("No deberia tirar excepcion");
 		}
 		Assert.assertEquals("El nombre se deberia haber modificado", "Juan Perez",
 				this.func.getOperarioActual().getNyA());
-		Assert.assertEquals("El userName se deberia haber modificado", "juanPerezzz",
+		Assert.assertEquals("El userName se deberia haber modificado", "juanPerezz",
 				this.func.getOperarioActual().getUsername());
 		Assert.assertEquals("El password se deberia haber modificado", "Juan123",
 				this.func.getOperarioActual().getPassword());
@@ -238,10 +238,11 @@ public class FuncionalidadOperariosTest2 {
 	public void testModificaPromocionTemporalIncorrecto() {
 		try {
 			this.func.modificaPromocionTemporal("Promo5", true);
-			Assert.fail("Deberia lanzar excepcion");
+			
 		} catch (NoExisteEnLaColeccion_Exception e) {
 
 		}
+		Assert.fail("Deberia lanzar excepcion");
 	}
 	@Test
 	public void testModificaPromocionTemporalCorrecto() {
@@ -271,11 +272,13 @@ public class FuncionalidadOperariosTest2 {
 	public void testAsignaMozoAMesaIncorrecto1() {
 		try {
 			this.func.asignaMozoAMesa(78, "Juan");
-			Assert.fail("Deberia lanzar excepcion de que no existe mesa");
+			
 		} catch (MozoNoActivo_Exception e) {
 			Assert.fail("No deberia lanzar excepcion");
 		} catch (NoExisteEnLaColeccion_Exception e) {
+			
 		}
+		Assert.fail("Deberia lanzar excepcion de que no existe mesa");
 	}
 
 	//Aclarar que siempte tira la exc TodasMesasInhabilit. y no hay javadoc para ver que hace ese metodo
