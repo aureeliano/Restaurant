@@ -86,13 +86,7 @@ public class FuncionalidadOperariosTest {
 		} catch (UserNameRepetido_Exception e) {
 		}
 	}
-/*
-	@Test
-	public void testEliminaOperario() {
-		this.func.eliminaOperario();
-		Assert.assertNull("No deberia estar en la coleccion",
-				Sistema.getInstance().getOperarios().get(this.op.getUsername()));
-	}*/
+
 
 	@Test
 	public void testModificaMozoIncorrecto() {

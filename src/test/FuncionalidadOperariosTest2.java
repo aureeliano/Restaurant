@@ -157,7 +157,7 @@ public class FuncionalidadOperariosTest2 {
 		Assert.assertEquals("El producto se deberia haber modificado", producto.getNombre(), "Agua con gas");
 	}
 
-	//PONER Q NUNCA SE LANZA UNA EXCEPCION
+
 	@Test
 	public void testModificaMesaCorrecto() {
 		try {
@@ -286,7 +286,7 @@ public class FuncionalidadOperariosTest2 {
 		}
 	}
 
-	//Aclarar que siempte tira la exc TodasMesasInhabilit. y no hay javadoc para ver que hace ese metodo
+	
 	@Test
 	public void testAbreComandaCorrecto() {
 		try {
