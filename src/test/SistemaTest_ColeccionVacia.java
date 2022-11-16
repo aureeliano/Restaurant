@@ -20,8 +20,9 @@ import negocio.Sistema;
 public class SistemaTest_ColeccionVacia {
 
 	private Sistema sistema = Sistema.getInstance();
-	private Operario op;
-	private Administrador admin;
+	private Operario op = new Operario("Juan", "juanPerez", "Juan123");
+	private Administrador admin = new Administrador("Admin", "ADMIN1234");
+	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 	}
@@ -32,8 +33,6 @@ public class SistemaTest_ColeccionVacia {
 
 	@Before
 	public void setUp() throws Exception {
-		op = new Operario("Juan", "juanPerez", "Juan123");
-		admin = new Administrador("Admin", "ADMIN1234");
 		admin.setNyA("Admin");
 		admin.setPassword("Admin1234");
 		Sistema.getInstance().getOperarios().clear();
@@ -47,7 +46,7 @@ public class SistemaTest_ColeccionVacia {
 	public void testLoginCorrectoOp() {
 		FuncionalidadOperarios func=null;
 		try {
-			this.sistema.login(op.getUsername(), op.getPassword(), admin.getNyA(), admin.getPassword());
+			func = this.sistema.login(op.getUsername(), op.getPassword(), admin.getNyA(), admin.getPassword());
 			Assert.fail("se deberia lanzar excepcion de que no existe");
 		} catch (UserNameIncorrecto_Exception e) {
 			
@@ -59,7 +58,7 @@ public class SistemaTest_ColeccionVacia {
 	}
 	
 	@Test
-	public void testLoginIncorrectoAd1() {
+	public void testLoginIncorrectoAdCorto() {
 		FuncionalidadOperarios func=null;
 		try {
 			this.sistema.login("ADMIN", "ADMIN1234", admin.getNyA(), "Admi1");
@@ -74,7 +73,7 @@ public class SistemaTest_ColeccionVacia {
 	}
 	
 	@Test
-	public void testLoginIncorrectoAd2() {
+	public void testLoginIncorrectoLargo() {
 		FuncionalidadOperarios func=null;
 		try {
 			this.sistema.login("ADMIN", "ADMIN1234", admin.getNyA(), "Admi1255555555555555555");
@@ -89,7 +88,7 @@ public class SistemaTest_ColeccionVacia {
 	}
 	
 	@Test
-	public void testLoginIncorrectoAd3() {
+	public void testLoginIncorrectoAdSinMayus() {
 		FuncionalidadOperarios func=null;
 		try {
 			this.sistema.login("ADMIN", "ADMIN1234", admin.getNyA(), "admin125");
@@ -104,7 +103,7 @@ public class SistemaTest_ColeccionVacia {
 	}
 	
 	@Test
-	public void testLoginIncorrectoAd4() {
+	public void testLoginIncorrectoAdSinDigito() {
 		FuncionalidadOperarios func=null;
 		try {
 			this.sistema.login("ADMIN", "ADMIN1234", admin.getNyA(), "Adminnnn");
@@ -119,7 +118,7 @@ public class SistemaTest_ColeccionVacia {
 	}
 	
 	@Test
-	public void testLoginIncorrectoAd5() {
+	public void testLoginIncorrectoAdNulo() {
 		FuncionalidadOperarios func=null;
 		try {
 			this.sistema.login("ADMIN", "ADMIN1234", admin.getNyA(),null);
@@ -134,7 +133,7 @@ public class SistemaTest_ColeccionVacia {
 	}
 	
 	@Test
-	public void testLoginIncorrectoAd6() {
+	public void testLoginIncorrectoAdVacio() {
 		FuncionalidadOperarios func=null;
 		try {
 			this.sistema.login("ADMIN", "ADMIN1234", admin.getNyA(),"");

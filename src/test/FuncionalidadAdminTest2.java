@@ -32,17 +32,17 @@ import negocio.Sistema;
 public class FuncionalidadAdminTest2 {
 	
 	private FuncionalidadAdmin func = new FuncionalidadAdmin(new Administrador("Admin", "pass"));
-
+	private Mozo mozo = new Mozo ("JuanPerez", new Date(2,10,1983), 5);
+	private Mesa mesa = new Mesa (4);
+	private Operario op = new Operario("Juan", "juanCarlos", "Carlos1234");
+	private Producto p = new Producto ("Pizza", 10, 20, 10);
+	{Sistema.getInstance().getMozos().put("JuanPerez", mozo);
+	Sistema.getInstance().getMesas().put(0, mesa);
+	Sistema.getInstance().getOperarios().put("juanCarlos", op);
+	Sistema.getInstance().getProductos().put(p.getIdProd(), p);}
+	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		Mozo mozo = new Mozo ("JuanPerez", new Date(2,10,1983), 5);
-		Mesa mesa = new Mesa (4);
-		Operario op = new Operario("Juan", "juanCarlos", "Carlos1234");
-		Producto p = new Producto ("Pizza", 10, 20, 10);
-		Sistema.getInstance().getMozos().put("JuanPerez", mozo);
-		Sistema.getInstance().getMesas().put(0, mesa);
-		Sistema.getInstance().getOperarios().put("juanCarlos", op);
-		Sistema.getInstance().getProductos().put(p.getIdProd(), p);
 	}
 
 	@AfterClass
@@ -51,12 +51,11 @@ public class FuncionalidadAdminTest2 {
 
 	@Before
 	public void setUp() throws Exception {
-	
+		
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		
 	}
 	
 	@Test
@@ -105,7 +104,7 @@ public class FuncionalidadAdminTest2 {
 	@Test
 	public void testAgregaMozoIncorrecto2() {
 		try {
-			this.func.agregaMozo("Juan Perez", 2, 10, 2004, 5);	
+			this.func.agregaMozo("Jorge", 2, 10, 2008, 5);	
 			Assert.fail("Se deberia haber lanzado excepcion de Edad invalida");
 		} catch (NyARepetido_Exception e) {
 			Assert.fail("No deberia lanzarse excepcion de tipo NyARepetido_Exception");
@@ -116,6 +115,7 @@ public class FuncionalidadAdminTest2 {
 	}
 	
 	
+	//ver valor limite
 	@Test
 	public void testAgregaMozoIncorrecto3() {
 		try {
@@ -126,11 +126,13 @@ public class FuncionalidadAdminTest2 {
 			this.func.agregaMozo("Susana Perez", 5, 6, 1999, 0);	
 			this.func.agregaMozo("Cristian Perez", 5, 6, 1999, 0);
 			this.func.agregaMozo("Cristian U", 5, 6, 1999, 0);
+			this.func.agregaMozo("Paulita", 5, 6, 1999, 0);
 			Assert.fail("Se deberia haber lanzado excepcion");
 		} catch (NyARepetido_Exception e) {
 			Assert.fail("No deberia lanzarse excepcion de tipo NyARepetido_Exception");
 		} catch (NoPuedeHaberMasDe6Mozos_Exception e) {
-
+			Sistema.getInstance().getMozos().clear();
+			Sistema.getInstance().getMozos().put("JuanPerez", mozo);
 		} catch (MozoMenorDeEdad_Exception e) {
 			Assert.fail("No deberia lanzarse excepcion de tipo MozoMenorDeEdad_Exception");
 		}
@@ -139,22 +141,23 @@ public class FuncionalidadAdminTest2 {
 	@Test
 	public void testEliminaMozoCorrecto() {
 		try {
-			this.func.eliminaMozo("Juan Perez");
+			this.func.eliminaMozo("JuanPerez");
 		} catch (NoExisteEnLaColeccion_Exception e) {
 			Assert.fail("No deberia lanzarse excepcion");
 		}
 		Mozo mozo = Sistema.getInstance().getMozos().get("Juan Perez");
 		Assert.assertNull("El mozo NO deberia estar en la coleccion de mozos", mozo);
+		Sistema.getInstance().getMozos().put("JuanPerez", this.mozo);
 	}
 	
 	@Test
 	public void testEliminaMozoIncorrecto() {
 		try {
 			this.func.eliminaMozo("Luis Miguel");
+			Assert.fail("Deberia lanzarse excepcion de que no existe el mozo a eliminar");
 		} catch (NoExisteEnLaColeccion_Exception e) {
 			
 		}
-		Assert.fail("Deberia lanzarse excepcion de que no existe el mozo a eliminar");
 	}
 	
 	@Test
@@ -229,22 +232,22 @@ public class FuncionalidadAdminTest2 {
 	@Test
 	public void testEliminaOperarioCorrecto() {
 		try {
-			this.func.eliminaOperario("juanPerez");
+			this.func.eliminaOperario("juanCarlos");
+			Operario op = Sistema.getInstance().getOperarios().get("juanCarlos");
+			Assert.assertNull("El operario deberia haber sido eliminado", op);
 		} catch (NoExisteEnLaColeccion_Exception e) {
 			Assert.fail("No deberia lanzarse excepcion");
 		}
-		Operario op = Sistema.getInstance().getOperarios().get("juanPerez");
-		Assert.assertNull("El operario deberia haber sido eliminado");
 	}
 	
 	@Test
 	public void testEliminaOperarioIncorrecto() {
 		try {
 			this.func.eliminaOperario("pepe");
+			Assert.fail("Deberia lanzar excepcion de que no existe el operario a eliminar");
 		} catch (NoExisteEnLaColeccion_Exception e) {
 
 		}
-		Assert.fail("Deberia lanzar excepcion de que no existe el operario a eliminar");
 	}
 	
 	@Test
@@ -281,13 +284,14 @@ public class FuncionalidadAdminTest2 {
 	@Test
 	public void testEliminaProductoCorrecto() {
 		try {
-			this.func.eliminaProducto(0);
+			this.func.eliminaProducto(p.getIdProd());
+			Assert.assertNull("El producto deberia haber sido eliminado", Sistema.getInstance().getProductos().get(p.getIdProd()));
+			Sistema.getInstance().getProductos().put(p.getIdProd(), p);
 		} catch (ProductoEstaEnComanda_Exception e) {
 			Assert.fail("No deberia lanzar excepcion");
 		} catch (NoExisteEnLaColeccion_Exception e) {
 			Assert.fail("No deberia lanzar excepcion");
 		}
-		Assert.assertNull("El producto deberia haber sido eliminado", Sistema.getInstance().getProductos().get(0));
 	}
 	
 	@Test
@@ -322,22 +326,22 @@ public class FuncionalidadAdminTest2 {
 	@Test
 	public void testModificaStockProductoCorrecto() {
 		try {
-			this.func.modificaStockDeProducto(0, 12, 25);
+			this.func.modificaStockDeProducto(this.p.getIdProd(), 12, 25);
+			Assert.assertEquals("El stock inicial se deberia haber modificado",12, Sistema.getInstance().getProductos().get(this.p.getIdProd()).getStockInicial());
+			Assert.assertEquals("El stock actual se deberia haber modificado",25, Sistema.getInstance().getProductos().get(this.p.getIdProd()).getStockActual());
 		} catch (NoExisteEnLaColeccion_Exception e) {
 			Assert.fail("No deberia lanzar excepcion");
 		}
-		Assert.assertEquals("El stock inicial se deberia haber modificado",12, Sistema.getInstance().getProductos().get(0).getStockInicial());
-		Assert.assertEquals("El stock actual se deberia haber modificado",25, Sistema.getInstance().getProductos().get(0).getStockActual());
 	}
 	
 	@Test
 	public void testModificaStockProductoIncorrecto() {
 		try {
 			this.func.modificaStockDeProducto(500, 12, 25);
+			Assert.fail("Deberia tirar una excepcion de que no existe el producto");
 		} catch (NoExisteEnLaColeccion_Exception e) {
 			
 		}
-		Assert.fail("Deberia tirar una excepcion de que no existe el producto");
 	}
 	
 
@@ -364,18 +368,19 @@ public class FuncionalidadAdminTest2 {
 	public void testEliminaMesaCorrecto() {
 		try {
 			this.func.eliminaMesa(0);
+			Assert.assertNull("La mesa deberia haber sido eliminada", Sistema.getInstance().getMesas().get(0));
+			Sistema.getInstance().getMesas().put(0, this.mesa);
 		} catch (NoExisteEnLaColeccion_Exception e) {
 			Assert.fail("No deberia lanzar excepcion");
 		}
-		Assert.assertNull("La mesa deberia haber sido eliminada", Sistema.getInstance().getMesas().get(0));
 	}
 	
 	@Test
 	public void testEliminaMesaIncorrecto() {
 		try {
 			this.func.eliminaMesa(55);
+			Assert.fail("Deberia tirar excepcion");
 		} catch (NoExisteEnLaColeccion_Exception e) {
 		}
-		Assert.fail("Deberia tirar excepcion");
 	}
 }

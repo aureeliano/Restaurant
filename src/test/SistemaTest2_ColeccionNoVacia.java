@@ -48,6 +48,7 @@ public class SistemaTest2_ColeccionNoVacia {
 		FuncionalidadOperarios func=null;
 		try {
 			this.sistema.login(op.getUsername(), op.getPassword(), admin.getNyA(), admin.getPassword());
+			Assert.assertNotNull("La instancia func no deberia ser nula", func);
 		} catch (UserNameIncorrecto_Exception e) {
 			Assert.fail("No debería lanzar excepcion");
 		} catch (ContrasenaIncorrecta_Exception e) {
@@ -55,7 +56,6 @@ public class SistemaTest2_ColeccionNoVacia {
 		} catch (OperarioNoActivo_Exception e) {
 			Assert.fail("No debería lanzar excepcion");
 		}
-		Assert.assertNotNull("La instancia func no deberia ser nula", func);
 	}
 	
 	@Test
@@ -105,7 +105,7 @@ public class SistemaTest2_ColeccionNoVacia {
 	}
 	
 	@Test
-	public void testLoginIncorrectoAd1() {
+	public void testLoginIncorrectoAdCorto() {
 		FuncionalidadOperarios func=null;
 		try {
 			this.sistema.login("ADMIN", "ADMIN1234", admin.getNyA(), "Admi1");
@@ -120,7 +120,7 @@ public class SistemaTest2_ColeccionNoVacia {
 	}
 	
 	@Test
-	public void testLoginIncorrectoAd2() {
+	public void testLoginIncorrectoAdLargo() {
 		FuncionalidadOperarios func=null;
 		try {
 			this.sistema.login("ADMIN", "ADMIN1234", admin.getNyA(), "Admi1255555555555555555");
@@ -135,7 +135,7 @@ public class SistemaTest2_ColeccionNoVacia {
 	}
 	
 	@Test
-	public void testLoginIncorrectoAd3() {
+	public void testLoginIncorrectoAdSinMayus() {
 		FuncionalidadOperarios func=null;
 		try {
 			this.sistema.login("ADMIN", "ADMIN1234", admin.getNyA(), "admin125");
@@ -150,7 +150,7 @@ public class SistemaTest2_ColeccionNoVacia {
 	}
 	
 	@Test
-	public void testLoginIncorrectoAd4() {
+	public void testLoginIncorrectoAdSinDigito() {
 		FuncionalidadOperarios func=null;
 		try {
 			this.sistema.login("ADMIN", "ADMIN1234", admin.getNyA(), "Adminnnn");
@@ -165,7 +165,7 @@ public class SistemaTest2_ColeccionNoVacia {
 	}
 	
 	@Test
-	public void testLoginIncorrectoAd5() {
+	public void testLoginIncorrectoAdnull() {
 		FuncionalidadOperarios func=null;
 		try {
 			this.sistema.login("ADMIN", "ADMIN1234", admin.getNyA(),null);
@@ -180,7 +180,7 @@ public class SistemaTest2_ColeccionNoVacia {
 	}
 	
 	@Test
-	public void testLoginIncorrectoAd6() {
+	public void testLoginIncorrectoAdVacio() {
 		FuncionalidadOperarios func=null;
 		try {
 			this.sistema.login("ADMIN", "ADMIN1234", admin.getNyA(),"");

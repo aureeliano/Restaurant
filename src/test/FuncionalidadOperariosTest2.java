@@ -56,8 +56,8 @@ public class FuncionalidadOperariosTest2 {
 	Sistema.getInstance().getMozos().put(this.mozo2.getNyA(), mozo2);
 	Sistema.getInstance().getProductos().put(this.prod.getIdProd(), prod);
 	Sistema.getInstance().getProductos().put(this.prod1.getIdProd(), prod1);
-	Sistema.getInstance().getPromocionProds().put(0, promo1);
-	Sistema.getInstance().getPromocionTemps().add(promoTemp);}
+	Sistema.getInstance().getPromocionProds().put(0, promo1);}
+	//Sistema.getInstance().getPromocionTemps().add(promoTemp);}
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -71,7 +71,11 @@ public class FuncionalidadOperariosTest2 {
 
 	@Before
 	public void setUp() throws Exception {
-		
+		Sistema.getInstance().getPromocionTemps().add(promoTemp);
+		Sistema.getInstance().getMozos().put(this.mozo1.getNyA(), mozo1);
+		Sistema.getInstance().getMozos().put(this.mozo2.getNyA(), mozo2);
+		Sistema.getInstance().getMesas().put(this.mesa0.getNroMesa(), mesa0);
+		Sistema.getInstance().getMesas().put(this.mesa1.getNroMesa(), mesa1);
 	}
 
 	@After
@@ -80,7 +84,7 @@ public class FuncionalidadOperariosTest2 {
 		Sistema.getInstance().getMesas().clear();
 		Sistema.getInstance().getProductos().clear();
 		Sistema.getInstance().getPromocionProds().clear();
-		Sistema.getInstance().getPromocionTemps().remove(0);
+		Sistema.getInstance().getPromocionTemps().clear();
 	}
 
 	@Test
@@ -217,21 +221,22 @@ public class FuncionalidadOperariosTest2 {
 		try {
 			this.func.agregaPromocionTemporal(Enumerados.diasDePromo.FRIDAY, "Promo2", Enumerados.formaDePago.CTADNI,
 					20, false);
+			Assert.assertNotNull("Se deberia haber agreagdo la promo", Sistema.getInstance().getPromocionTemps().get(1));
 		} catch (PromocionTemporalNombreRepetido_Exception e) {
 			Assert.fail("No deberia lanzar excepcion");
 		}
-		Assert.assertNotNull("Se deberia haber agreagdo la promo", Sistema.getInstance().getPromocionTemps().get(0));
 	}
 
 	@Test
 	public void testEliminaPromocionTemporal() {
 		
 		try {
+			//System.out.println(Sistema.getInstance().getPromocionTemps().get(0).getNombre());
 			this.func.eliminaPromocionTemporal("Promo1");
+			Assert.assertTrue("Se deberia haber eliminado la promo",Sistema.getInstance().getPromocionTemps().isEmpty());
 		} catch (NoExisteEnLaColeccion_Exception e) {
 			Assert.fail("Deberia lanzar excepcion");
 		}
-		Assert.assertNull("Se deberia haber eliminado la promo", Sistema.getInstance().getPromocionTemps().get(0));
 	}
 
 	@Test
@@ -239,10 +244,10 @@ public class FuncionalidadOperariosTest2 {
 		try {
 			this.func.modificaPromocionTemporal("Promo5", true);
 			
+			Assert.fail("Deberia lanzar excepcion");
 		} catch (NoExisteEnLaColeccion_Exception e) {
 
 		}
-		Assert.fail("Deberia lanzar excepcion");
 	}
 	@Test
 	public void testModificaPromocionTemporalCorrecto() {
@@ -272,13 +277,13 @@ public class FuncionalidadOperariosTest2 {
 	public void testAsignaMozoAMesaIncorrecto1() {
 		try {
 			this.func.asignaMozoAMesa(78, "Juan");
+			Assert.fail("Deberia lanzar excepcion de que no existe mesa");
 			
 		} catch (MozoNoActivo_Exception e) {
 			Assert.fail("No deberia lanzar excepcion");
 		} catch (NoExisteEnLaColeccion_Exception e) {
 			
 		}
-		Assert.fail("Deberia lanzar excepcion de que no existe mesa");
 	}
 
 	//Aclarar que siempte tira la exc TodasMesasInhabilit. y no hay javadoc para ver que hace ese metodo
@@ -305,8 +310,9 @@ public class FuncionalidadOperariosTest2 {
 	}
 	@Test
 	public void testAbreComandaIncorrecto1() {
+		Sistema.getInstance().getMesas().remove(this.mesa0.getNroMesa());
 		try {
-			this.func.abreComanda(0);
+			this.func.abreComanda(this.mesa0.getNroMesa());
 			Assert.fail("Deberia lanzar excepcion");
 		} catch (TodasMesasInhabilitadas_Exception e) {
 			Assert.fail("No deberia lanzar excepcion");
@@ -327,13 +333,11 @@ public class FuncionalidadOperariosTest2 {
 
 	@Test
 	public void testAbreComandaIncorrecto2() {
-		Mesa mesa = new Mesa(4);
-		mesa.setEstado(Enumerados.estadoMesa.LIBRE);
-		Sistema.getInstance().getMozos().put("Juan", new Mozo("Juan", new Date(1,2,1999),3));
-		Sistema.getInstance().getMesas().put(0, mesa);
+		this.mesa0.setEstado(Enumerados.estadoMesa.OCUPADA);
+		this.mesa1.setEstado(Enumerados.estadoMesa.LIBRE);
 		try {
-			this.func.abreComanda(0);
-			Assert.fail("No deberia lanzar excepcion");
+			this.func.abreComanda(this.mesa0.getNroMesa());
+			Assert.fail("Deberia lanzar excepcion");
 		} catch (TodasMesasInhabilitadas_Exception e) {
 			Assert.fail("No deberia lanzar excepcion");
 		} catch (TodosMozosInactivos_Exception e) {
@@ -355,14 +359,10 @@ public class FuncionalidadOperariosTest2 {
 	//Hay una mesa libre y me lanza excepcion de mesas inhabilitadas. Siempre lanza esa exc.OBSERVACION
 	@Test
 	public void testAbreComandaIncorrecto3() {
-		Mesa mesa = new Mesa(4);
-		Mozo mozo = new Mozo("Juan", new Date(1,2,2000), 3);
-		mozo.setEstado(Enumerados.estadoMozo.AUSENTE);
-		mesa.setEstado(Enumerados.estadoMesa.LIBRE);
-		Sistema.getInstance().getMesas().put(0, mesa);
-		Sistema.getInstance().getMozos().put("Juan", mozo);
+		this.mozo1.setEstado(Enumerados.estadoMozo.AUSENTE);
+		this.mesa0.setEstado(Enumerados.estadoMesa.LIBRE);
 		try {
-			this.func.abreComanda(0);
+			this.func.abreComanda(this.mesa0.getNroMesa());
 			Assert.fail("Deberia lanzar excepcion");
 		} catch (TodasMesasInhabilitadas_Exception e) {
 			Assert.fail("No deberia lanzar excepcion de TodasMesasInhabilitadas_Exception");
@@ -480,7 +480,7 @@ public class FuncionalidadOperariosTest2 {
 		this.mozo1.getMesasAtendidas().add(new MesaAtendida(this.mesa0, null, 500, Enumerados.formaDePago.CTADNI, null));
 		try {
 			res = this.func.estadisticasEmpleado(this.mozo1.getNyA());
-			System.out.println(res);
+			//System.out.println(res);
 			Assert.assertTrue("No se calculan las estadisticas", res>=0);
 		} catch (NoExisteEnLaColeccion_Exception e) {
 			Assert.fail("No deberia lanzar excepcion");
@@ -488,8 +488,9 @@ public class FuncionalidadOperariosTest2 {
 	}
 	
 	@Test
-	public void testEstadisticasEmpleadoIncorrecta() {
+	public void testEstadisticasEmpleadoSinMesasAtendidas() {
 		double res = -1;
+		this.mozo1.getMesasAtendidas().clear();
 		try {
 			res = this.func.estadisticasEmpleado(this.mozo1.getNyA());
 			Assert.assertTrue("No se calculan las estadisticas", res>=0);
@@ -519,31 +520,31 @@ public class FuncionalidadOperariosTest2 {
 	}
 
 	@Test
-	public void testConsumoPromedioPorMesa() {
+	public void testConsumoPromedioPorMesaConMesasAtendidas() {
 		double res = -1;
 		MesaAtendida mesaAt = new MesaAtendida(this.mesa0, null, 500, Enumerados.formaDePago.CTADNI, null);
 		MesaAtendida mesaAt2 = new MesaAtendida(this.mesa0, null, 500, Enumerados.formaDePago.CTADNI, null);
 		MesaAtendida mesaAt3 = new MesaAtendida(this.mesa0, null, 500, Enumerados.formaDePago.CTADNI, null);
 		try {
 			res = this.func.consumoPromedioPorMesa(this.mesa0.getNroMesa());
-			System.out.println(res);
+			//System.out.println(res);
+			Assert.assertTrue("Calcula mal el promedio", res>=0);
 		} catch (NoExisteEnLaColeccion_Exception e) {
 			Assert.fail("No deberia lanzar excepcion");
 		}
-		Assert.assertTrue("Calcula mal el promedio", res>=0);
 		
 	}
 	
-	@Test //sin mesas atendidas
-	public void testConsumoPromedioPorMesaIncorercto() {
+	@Test 
+	public void testConsumoPromedioPorMesaSinMesasAtendidas() {
 		double res = -1;
 		try {
 			res = this.func.consumoPromedioPorMesa(this.mesa0.getNroMesa());
-			System.out.println(res);
+			//System.out.println(res);
+			Assert.assertTrue("Calcula mal el promedio", res>=0);
 		} catch (NoExisteEnLaColeccion_Exception e) {
 			Assert.fail("No deberia lanzar excepcion");
 		}
-		Assert.assertTrue("Calcula mal el promedio", res>=0);
 		
 	}
 }

@@ -73,9 +73,9 @@ public class FuncionalidadOperariosTest {
 		Assert.assertEquals("El nombre se deberia haber modificado", "Juan Perez",
 				this.func.getOperarioActual().getNyA());
 		Assert.assertEquals("El userName se deberia haber modificado", "juanPerezzz",
-				this.func.getOperarioActual().getNyA());
+				this.func.getOperarioActual().getUsername());
 		Assert.assertEquals("El password se deberia haber modificado", "Juan123",
-				this.func.getOperarioActual().getNyA());
+				this.func.getOperarioActual().getPassword());
 	}
 
 	@Test

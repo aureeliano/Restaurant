@@ -87,9 +87,13 @@ public class FuncionalidadAdmin extends FuncionalidadOperarios
 	 */
 	public void eliminaMozo(String NyA) throws NoExisteEnLaColeccion_Exception
 	{
-		if (!Sistema.getInstance().getMozos().containsKey(NyA))
+		if (!Sistema.getInstance().getMozos().containsKey(NyA)) {
 			throw new NoExisteEnLaColeccion_Exception(NyA);
-		Sistema.getInstance().getMozos().remove(NyA);
+		}
+		else {
+			
+			Sistema.getInstance().getMozos().remove(NyA);
+		}
 	}
 
 	/**

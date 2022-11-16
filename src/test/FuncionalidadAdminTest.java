@@ -93,6 +93,7 @@ public class FuncionalidadAdminTest {
 			this.func.agregaMozo("Susana Perez", 5, 6, 1999, 0);	
 			this.func.agregaMozo("Cristian Perez", 5, 6, 1999, 0);
 			this.func.agregaMozo("Cristian U", 5, 6, 1999, 0);
+			this.func.agregaMozo("Paulita", 5, 6, 1999, 0);
 			Assert.fail("Se deberia haber lanzado excepcion");
 		} catch (NyARepetido_Exception e) {
 			Assert.fail("No deberia lanzarse excepcion de tipo NyARepetido_Exception");
