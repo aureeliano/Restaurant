@@ -1,5 +1,5 @@
-# Taller-De-Programacion-1-Grupo-4
-Taller de Programación 1
+# Taller-De-Programacion-1
+#Grupo-4- Subgrupo: Valentina Reale- Martiniano Presa
 
 Integrantes:<br>
 Valentina Reale <br>
